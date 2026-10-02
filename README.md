@@ -91,7 +91,7 @@ My answer keys started as the original pipeline's own boxes, which flatters it. 
 
 ## What I'd tell someone trying this
 
-- **It pays off fast on footage like yours.** A few dozen labeled pictures and about 10 to 15 minutes of training took rickshaws from mostly wrong to mostly right, on a laptop.
+- **It pays off fast when the new footage looks like what you trained on.** In Test 1, 141 labeled pictures and about 10 to 15 minutes of training on a laptop took rickshaws from 45 found out of 163 to about 130.
 - **Don't expect it to carry over to scenes it has never seen.** Collect the odd cases on purpose: other carts, night, rain, partly hidden vehicles.
 - **Give look-alikes their own name.** Without a "car" and a "truck", they get called the thing you care about.
 - **Test on footage you set aside,** and say what confidence cutoff you used.
