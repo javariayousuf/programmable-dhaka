@@ -4,12 +4,7 @@
 
 ![The fine-tuned model on a Dhaka street clip it never trained on](media/hero_dhaka_street.gif)
 
-*The Dhaka street clip, which RF-DETR never trained on. Blue is a person, pink a rickshaw, purple a motorcycle, amber a bicycle, yellow-green a cart. Heads are blurred.*
-
-> **In 30 seconds**
-> - **What:** I taught Roboflow's RF-DETR, an object detection model that draws a box and a name around each thing it recognizes, to identify rickshaws, using street video from Dhaka, Bangladesh.
-> - **Result:** trained on just a few short clips, the fine-tuned model found about 130 of 163 rickshaws on a street like its training footage, up from 45 with the original pipeline (the first-pass setup I started from). On a very different street the fine-tuned model did worse than the original pipeline, mostly by missing the carts.
-> - **Lesson:** fine-tuning (training the model further on your own labeled footage) works on what the model is shown, so include the messy cases.
+*The Dhaka street clip, which RF-DETR never trained on. Blue is a person, pink a rickshaw, purple a motorcycle, amber a bicycle, yellow-green a cart.*
 
 ## Contents
 
