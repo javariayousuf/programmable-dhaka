@@ -18,7 +18,7 @@ I wanted to understand the product by using it. I found it easy to stand up and 
 
 ## Why Dhaka
 
-I'm a Bangladeshi-American who has been to Dhaka, Bangladesh, so I know it has unique movement of people with different modalities, really unexpected pathways of travel, non conformity in shapes and colors, culturally vibrant. I wanted to stress test the capabilities of the open source model with something I knew was complex.
+I'm a Bangladeshi-American who has spent time in Dhaka, Bangladesh. I know from experience that there are really unique movement patterns: people with different modalities, really unexpected pathways of travel, non conformity in shapes and colors, culturally vibrant. I wanted to stress test the capabilities of the open source model with something I knew was complex.
 
 ## What I used
 
