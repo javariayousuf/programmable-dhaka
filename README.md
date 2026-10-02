@@ -24,8 +24,10 @@
 
 I wanted to understand the product by using it. I found it easy to stand up and onboard, and the speed is good.
 
-- **Plug and play, with intelligent modeling from RF-DETR.** All I needed to start was videos I downloaded. RF-DETR's pretrained model (already trained on everyday objects), with Grounding DINO (which finds things from a written description) for rickshaws and carts, drew a first set of labels, a box and a name around each vehicle. I call that first-pass setup the original pipeline. I corrected its mistakes instead of drawing every box myself: 39 of 168 boxes on the busy Dhaka street, and about two thirds on the clips that were mostly rickshaws.
-- **RF-DETR learned an unknown concept from a handful of examples.** RF-DETR knows 80 everyday kinds of objects but had no word for a rickshaw. I trained RF-DETR on 141 pictures, but they show only about five different rickshaws, many of them near-copies of each other. About 10 to 15 minutes of training later, on a laptop, RF-DETR found about 130 of 163 rickshaws in a clip it had never seen, up from 45 with the original pipeline.
+- **Plug and play.** All I needed to start was videos I downloaded.
+- **Intelligent modeling from RF-DETR.**
+  - **Pre-labeling.** RF-DETR's pretrained model (already trained on everyday objects), with Grounding DINO (which finds things from a written description) for rickshaws and carts, drew a first set of labels, a box and a name around each vehicle. I call that first-pass setup the original pipeline. I corrected its mistakes instead of drawing every box myself: 39 of 168 boxes on the busy Dhaka street, and about two thirds on the clips that were mostly rickshaws.
+  - **An unknown concept, from a handful of examples.** RF-DETR knows 80 everyday kinds of objects but had no word for a rickshaw. I trained RF-DETR on 141 pictures, but they show only about five different rickshaws, many of them near-copies of each other. About 10 to 15 minutes of training later, on a laptop, RF-DETR found about 130 of 163 rickshaws in a clip it had never seen, up from 45 with the original pipeline.
 - **Easy to customize and tune.** supervision let me change how vehicles are followed, how steady the boxes are, what gets blurred, and how everything is drawn, with a few settings each.
 - **Everything ran on one laptop,** at about 30 milliseconds per picture.
 
