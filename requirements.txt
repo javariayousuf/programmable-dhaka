@@ -5,4 +5,6 @@ rfdetr==1.11.1
 supervision==0.30.6
 torch==2.14.1
 transformers==5.18.0
-yt-dlp==2026.8.19
+imageio==2.38.0
+imageio-ffmpeg==0.6.0
+matplotlib==3.11.2

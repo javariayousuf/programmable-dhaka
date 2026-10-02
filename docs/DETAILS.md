@@ -36,9 +36,9 @@ The model only draws a box when it is at least 50% sure. Lowering that finds mor
 
 My answer keys started as the original pipeline's own boxes, which I then corrected. So its box shapes line up with the answer key by construction, while the fine-tuned model has to match them with boxes it draws itself. The original pipeline still lost on the rickshaw street, so this does not explain that result. It probably explains part of the gap on the Dhaka street.
 
-## On the Dhaka street, where the fine-tuned model won
+## Did the fine-tuned model win anywhere on the Dhaka street?
 
-I looked for frames where it found more rickshaws than the original pipeline. There were only 2, so there is no "where it wins" picture for that test.
+I looked for frames where it found more rickshaws than the original pipeline. There were only 2, so there is no "where it gained" picture for that test.
 
 ## What the final model learned from
 
@@ -64,11 +64,11 @@ A slideshow I made with OpenCV's `mp4v` codec showed as a solid green screen in 
 
 ## How the labels were corrected
 
-The first-pass labels came from the original pipeline: RF-DETR for people, bicycles and motorcycles, plus Grounding DINO with text like "a decorated three-wheeled cycle rickshaw" and "a push cart". The one rule: anything that carries a passenger behind a driver is a rickshaw, pedal or motorized.
+For the Dhaka street, e-rickshaw and rickshaw street clips, the first-pass labels came from the original pipeline: RF-DETR for people, bicycles and motorcycles, plus Grounding DINO with text like "a decorated three-wheeled cycle rickshaw" and "a push cart". For the night and rainy clips, the first pass came from a model already fine-tuned on the e-rickshaw and rickshaw street clips. The one rule throughout: anything that carries a passenger behind a driver is a rickshaw, pedal or motorized.
 
 For the night and rainy clips I built a small page that runs only on my own machine and groups boxes into vehicles, so I answer once per vehicle instead of once per frame ([`scripts/review_cards.py`](../scripts/review_cards.py)). My first version showed the same vehicle on several cards: 31 of 75 cards continued another card. Fixing the grouping brought the night clip from 75 cards to 51.
 
-The corrections chart counts boxes I relabeled, resized or added. The first three clips are not counted exactly like the last two, where I answered once per vehicle.
+The corrections chart counts boxes I relabeled, resized or added. It mixes two kinds of first guess (the original pipeline for the first three clips, a fine-tuned model for night and rainy), so only the first three are a like-for-like comparison. They are also not counted exactly like the last two, where I answered once per vehicle.
 
 ## Other limits
 
@@ -77,3 +77,38 @@ The corrections chart counts boxes I relabeled, resized or added. The first thre
 - Two reviewed cards (one night, one rainy) were marked "mixed" and left as the model guessed.
 - One box in the rickshaw street test is ambiguous between bicycle and rickshaw and is not scored.
 - Head blurring uses the model's person detections, so a small face the model missed could still show.
+
+## Fewer pictures, same result?
+
+The stills are 0.2 seconds apart, so many are near-copies. For Test 1 I trained on every 4th still, every 2nd, and all of them:
+
+| Pictures used | Rickshaws found (of 163) | False alarms |
+|---|---|---|
+| 36 (every 4th still) | 124 | 16 |
+| 71 (every 2nd) | 128 | 27 |
+| 141 (all) | 127 | 78 |
+
+Dropping three of every four pictures cost almost nothing here, which fits the near-copies. It is one run per row, and training Test 1 twice gave 131 and 135, so differences of a few are inside the noise. It also only tried evenly spaced subsets, not removing pictures by how alike they are. The results are in [`eval/label_budget_clip3.json`](../eval/label_budget_clip3.json), and `scripts/experiment_label_budget.py` reruns it.
+
+## More pictures
+
+**Found, by kind of vehicle, on the Dhaka street:**
+
+![Found, by kind of vehicle](../media/chart_per_class.png)
+
+**Mistakes on the rickshaw street, and on the Dhaka street:**
+
+![Mistakes on the rickshaw street](../media/mistakes_gallery_rickshaw_street.jpg)
+
+![Mistakes on the Dhaka street](../media/mistakes_gallery_dhaka.jpg)
+
+**The night clip.** The model I used for the first guess called cars rickshaws: it drew 425 "rickshaw" boxes, and after my corrections 58 boxes in the clip are rickshaws.
+
+| Night traffic | Rickshaw | Car | Motorcycle |
+|---|---|---|---|
+| First guess | 425 | 32 | 0 |
+| After my corrections | 58 | 379 | 26 |
+
+![Night traffic](../media/night_traffic.gif)
+
+*The model trained on this clip, so this is not a test.*

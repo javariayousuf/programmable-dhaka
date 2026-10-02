@@ -3,7 +3,7 @@
 The original videos and still frames are not in this repo. The Pexels License restricts selling or re-uploading unaltered copies, and the stills show real people's faces. The label files are here, and the pictures and videos in `media/` have heads blurred by the model.
 
 ```bash
-pip install -r requirements.txt "rfdetr[train]" matplotlib
+pip install -r requirements.txt "rfdetr[train]"
 ```
 
 1. Download the clips from Pexels (links in the README), HD or Full HD.
@@ -11,7 +11,7 @@ pip install -r requirements.txt "rfdetr[train]" matplotlib
 3. `python scripts/make_train_dataset.py clip2,clip3,night,rain` builds a training set from those label folders. Then `python scripts/train.py small 25`.
 4. `python scripts/evaluate.py clip1` scores the model on a clip that is not in the training set.
 5. New clips: `python scripts/prelabel_finetuned.py clip.mp4 out_dir 0.2` makes first-pass labels with the fine-tuned model, `python scripts/review_cards.py out_dir` opens the review page, and `python scripts/apply_review.py out_dir` writes your answers back.
-6. `python scripts/detect3.py clip.mp4 out.mp4 "Video by <creator> on Pexels" "pexels.com/@<handle>"` renders a video. `make_figures.py` and `make_charts.py` rebuild the pictures.
+6. `python scripts/detect3.py clip.mp4 out.mp4 "Video by <creator> on Pexels" "pexels.com/@<handle>"` renders a video. `python scripts/make_figures.py --images labels/clip1/images --clip clip1 --tag dhaka` and `python scripts/make_charts.py` rebuild the pictures. `python scripts/experiment_label_budget.py` reruns the fewer-pictures test.
 
 `detect3.py`, `make_figures.py` and `make_charts.py` use Futura from macOS by default. Set `FONT_PATH` to any `.ttf` on another system.
 
