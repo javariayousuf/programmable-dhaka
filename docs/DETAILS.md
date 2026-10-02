@@ -74,6 +74,7 @@ The corrections chart counts boxes I relabeled, resized or added. It mixes two k
 
 - Three short clips per test, one scene each. This shows the loop, and it is not a benchmark.
 - The Dhaka street test has the original pipeline's boxes behind its answer key (see above).
+- Trucks were not labeled as a class (my choice), so the model guesses on them. A rerun with a truck class is the obvious fix.
 - Two reviewed cards (one night, one rainy) were marked "mixed" and left as the model guessed.
 - One box in the rickshaw street test is ambiguous between bicycle and rickshaw and is not scored.
 - Head blurring uses the model's person detections, so a small face the model missed could still show.
@@ -88,7 +89,7 @@ The stills are 0.2 seconds apart, so many are near-copies. For Test 1 I trained 
 | 71 (every 2nd) | 128 | 27 |
 | 141 (all) | 127 | 78 |
 
-Dropping three of every four pictures cost almost nothing here, which fits the near-copies. It is one run per row, and training Test 1 twice gave 131 and 135, so differences of a few are inside the noise. It also only tried evenly spaced subsets, not removing pictures by how alike they are. The results are in [`eval/label_budget_clip3.json`](../eval/label_budget_clip3.json), and `scripts/experiment_label_budget.py` reruns it.
+Dropping three of every four pictures cost almost nothing here, which fits the near-copies. It is one run per row, and training Test 1 twice gave 131 and 135, so differences of a few are inside the noise. The test also only tried evenly spaced subsets, not removing pictures by how alike they are. The results are in [`eval/label_budget_clip3.json`](../eval/label_budget_clip3.json), and `scripts/experiment_label_budget.py` reruns it.
 
 ## More pictures
 

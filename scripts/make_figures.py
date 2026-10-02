@@ -4,7 +4,7 @@ import numpy as np, cv2
 import supervision as sv
 from PIL import Image, ImageDraw, ImageFont
 
-# Builds the README pictures for clip 3: a side-by-side before/after GIF, three before/after stills,
+# Builds the README pictures for a held-out test clip (default clip1, the Dhaka street): a side-by-side before/after GIF, three before/after stills,
 # and a gallery of real mistakes (old pipeline and fine-tuned model). Vehicles only, same style both sides.
 ROOT = Path(__file__).resolve().parent.parent
 ap = argparse.ArgumentParser()
