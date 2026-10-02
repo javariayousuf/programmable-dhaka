@@ -44,6 +44,24 @@ I looked for frames where it found more rickshaws than the original pipeline. Th
 
 ![What the final model learned from](../media/chart_training_boxes.png)
 
+## More pictures from the two tests
+
+**Test 1, the rickshaw street.** What happened to every rickshaw, and before and after:
+
+![What happened to every rickshaw on the rickshaw street clip](../media/chart_rickshaw_outcomes_street.png)
+
+![Before and after on the rickshaw street](../media/before_after_rickshaw_street.gif)
+
+**Test 2, the Dhaka street.** What happened to every rickshaw, and before and after:
+
+![What happened to every rickshaw on the Dhaka street clip](../media/chart_rickshaw_outcomes_dhaka.png)
+
+![Before and after on the Dhaka street](../media/before_after_dhaka.gif)
+
+## A video gotcha that was mine, not Roboflow's
+
+A slideshow I made with OpenCV's `mp4v` codec showed as a solid green screen in the player I used. Writing H.264 with `yuv420p` fixed it. The videos made through supervision played fine.
+
 ## How the labels were corrected
 
 The first-pass labels came from the original pipeline: RF-DETR for people, bicycles and motorcycles, plus Grounding DINO with text like "a decorated three-wheeled cycle rickshaw" and "a push cart". The one rule: anything that carries a passenger behind a driver is a rickshaw, pedal or motorized.

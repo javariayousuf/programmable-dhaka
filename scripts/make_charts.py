@@ -55,9 +55,9 @@ for c in names:
     tot.append(len(veh)); fixed.append(sum(1 for a in veh if a.get("corrected")))
 fig, ax = plt.subplots(figsize=(9, 3.9))
 ax.bar(range(len(names)), tot, color=GRAY, edgecolor="#333"); ax.bar(range(len(names)), fixed, color=RICK, edgecolor="#333")
-for i, (t, f) in enumerate(zip(tot, fixed)): ax.text(i, t + 8, f"{round(100 * f / t)}%\nchanged", ha="center", fontsize=12)
+for i, (t, f) in enumerate(zip(tot, fixed)): ax.text(i, t + 8, f"{round(100 * f / t)}%\ncorrected", ha="center", fontsize=12)
 ax.set_xticks(range(len(names))); ax.set_xticklabels(list(names.values())); ax.set_ylim(0, max(tot) * 1.25)
-ax.set_ylabel("Vehicle boxes"); ax.set_title("How much of the first guess I changed", loc="left", fontsize=16)
+ax.set_ylabel("Vehicle boxes"); ax.set_title("How much of the first guess I corrected", loc="left", fontsize=16)
 save(fig, "chart_corrections.png")
 
 # 4) what the model had to learn from (explains why motorcycles got worse)
