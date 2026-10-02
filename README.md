@@ -12,8 +12,8 @@
 
 - [Reasons to try Roboflow's open source tools](#reasons-to-try-roboflows-open-source-tools)
 - [Why I picked Dhaka: a scene I knew would stress the model](#why-i-picked-dhaka-a-scene-i-knew-would-stress-the-model)
-- [In my clips, I corrected far more guesses when the footage had less variety](#in-my-clips-i-corrected-far-more-guesses-when-the-footage-had-less-variety)
-- [In my tests, fine-tuning helped on familiar footage and fell short on unfamiliar footage](#in-my-tests-fine-tuning-helped-on-familiar-footage-and-fell-short-on-unfamiliar-footage)
+- [What I observed: the more a scene was just rickshaws, the more labels I had to correct](#what-i-observed-the-more-a-scene-was-just-rickshaws-the-more-labels-i-had-to-correct)
+- [What I found: fine-tuned RF-DETR learned rickshaws on a similar street, and missed the carts on a different one](#what-i-found-fine-tuned-rf-detr-learned-rickshaws-on-a-similar-street-and-missed-the-carts-on-a-different-one)
 - [Limits: trucks, crowded carts, unreviewed people](#limits-trucks-crowded-carts-unreviewed-people)
 - [Product feedback: five things that cost me time](#product-feedback-five-things-that-cost-me-time)
 - [Three questions I'd like to dig into: carts, near-duplicate frames, the edge](#three-questions-id-like-to-dig-into-carts-near-duplicate-frames-the-edge)
@@ -34,7 +34,7 @@ I wanted to understand the product by using it. I found it easy to stand up and 
 
 I'm a Bangladeshi-American who has spent time in Dhaka, Bangladesh. I know from experience that there are really unique movement patterns: people with different modalities, really unexpected pathways of travel, non conformity in shapes and colors, culturally vibrant. I wanted to stress test the capabilities of the open source model with something I knew was complex.
 
-## In my clips, I corrected far more guesses when the footage had less variety
+## What I observed: the more a scene was just rickshaws, the more labels I had to correct
 
 To get started I corrected a first set of labels by hand, with one rule: **anything that carries a passenger behind a driver is a rickshaw**, pedal or motorized. For the first three clips the first set came from the original pipeline. I corrected far more of the original pipeline's guesses on the clips with less variety than on the varied one.
 
@@ -42,7 +42,7 @@ To get started I corrected a first set of labels by hand, with one rule: **anyth
 
 On the busy Dhaka street I corrected 23% of the boxes. On the two clips that were mostly rickshaws I corrected 62% and 67%. My guess, which I have not tested: the first-pass tools already handle everyday objects, so a scene full of them needs little correcting, and a scene that is mostly the one thing they have no word for needs correcting nearly everywhere. (The night and rainy clips started from a model already fine-tuned on those two, so they are not a like-for-like comparison. At night 86% of the boxes needed correcting, mostly cars the model had called rickshaws.)
 
-## In my tests, fine-tuning helped on familiar footage and fell short on unfamiliar footage
+## What I found: fine-tuned RF-DETR learned rickshaws on a similar street, and missed the carts on a different one
 
 "Fine-tuned" means RF-DETR trained further on my own corrected labels. Each test scores the model on a clip it never trained on, against my corrected labels. The overall score runs from 0 to 1, and higher is better. These are small tests: each model trained on only two to four short clips, so read the numbers as a direction, not a benchmark.
 
