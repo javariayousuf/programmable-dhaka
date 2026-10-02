@@ -17,8 +17,7 @@
 - [Product feedback](#product-feedback)
 - [Questions I'd like to dig into](#questions-id-like-to-dig-into)
 - [Details, reproduce steps and tips](#details-reproduce-steps-and-tips)
-- [Built with](#built-with)
-- [Footage credits](#footage-credits)
+- [Built with open source tools and Claude Code](#built-with-open-source-tools-and-claude-code)
 
 ## Reasons to try Roboflow's open source tools
 
@@ -95,11 +94,11 @@ Things that cost me time, and what I would suggest (rfdetr 1.11.1, supervision 0
 - [Reproduce it](docs/REPRODUCE.md): commands and layout.
 - [Tips and learnings](docs/LEARNINGS.md): what I'd tell someone trying this.
 
-## Built with
+## Built with open source tools and Claude Code
 
 [RF-DETR](https://github.com/roboflow/rf-detr), [supervision](https://github.com/roboflow/supervision), [Grounding DINO](https://huggingface.co/IDEA-Research/grounding-dino-tiny) (IDEA Research, via Hugging Face), PyTorch, OpenCV, matplotlib, and [Claude Code](https://claude.com/claude-code).
 
-## Footage credits
+### Footage credits
 
 All footage is from [Pexels](https://www.pexels.com) under the Pexels License. Everything shown here is altered, and the original videos are not in this repo.
 
