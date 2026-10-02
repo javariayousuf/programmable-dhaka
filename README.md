@@ -8,7 +8,7 @@
 
 > **In 30 seconds**
 > - **What:** I taught Roboflow's RF-DETR, an object detection model that draws a box and a name around each thing it recognizes, to identify rickshaws, using street video from Dhaka, Bangladesh.
-> - **Result:** on a street like its training footage, the fine-tuned model found about 130 of 163 rickshaws, up from 45 with the original pipeline (the first-pass setup I started from). On a very different street the fine-tuned model did worse than the original pipeline, mostly by missing the carts.
+> - **Result:** trained on just a few short clips, the fine-tuned model found about 130 of 163 rickshaws on a street like its training footage, up from 45 with the original pipeline (the first-pass setup I started from). On a very different street the fine-tuned model did worse than the original pipeline, mostly by missing the carts.
 > - **Lesson:** fine-tuning (training the model further on your own labeled footage) works on what the model is shown, so include the messy cases.
 
 ## Contents
@@ -47,7 +47,7 @@ On the busy Dhaka street I corrected 23% of the boxes. On the two clips that wer
 
 ## In my tests, fine-tuning helped on familiar footage and fell short on unfamiliar footage
 
-"Fine-tuned" means RF-DETR trained further on my own corrected labels. Each test scores the model on a clip it never trained on, against my corrected labels. The overall score runs from 0 to 1, and higher is better.
+"Fine-tuned" means RF-DETR trained further on my own corrected labels. Each test scores the model on a clip it never trained on, against my corrected labels. The overall score runs from 0 to 1, and higher is better. These are small tests: each model trained on only two to four short clips, so read the numbers as a direction, not a benchmark.
 
 ![Three tests](media/chart_two_tests.png)
 
@@ -73,7 +73,7 @@ Pictures of the mistakes are in the [details](docs/DETAILS.md).
 
 ## Product feedback: five things that cost me time
 
-Things that cost me time, and what I would suggest (rfdetr 1.11.1, supervision 0.30.6). I checked each one against the library.
+Things that cost me time, and what I would suggest (rfdetr 1.11.1, supervision 0.30.6). **Summarized by Claude (Claude Code) from the problems that came up while building this, and checked by Claude against the library versions listed.** Worth confirming any single item before relying on it.
 
 - **The names and the numbers don't line up.** The model returns each object as a number up to 90, with gaps, but the library's name list has 80 entries starting at zero, so a name lands on the wrong object. My people came out as "bicycle." *Suggestion:* return the names with the detections.
 - **A removed-import error points to the wrong place.** The error says to use `rfdetr.utilities`, but the class names are in `rfdetr.assets.coco_classes`. *Suggestion:* name the real location.
