@@ -19,7 +19,7 @@ An earlier version trained on the Dhaka street clip alone and tested on the e-ri
 
 ## How many different rickshaws did the model see?
 
-Test 1 trained on 141 pictures, but pictures are 0.2 seconds apart, so many are near-copies. Linking each rickshaw box to the same vehicle in neighboring pictures, the 84 rickshaw boxes in those pictures come from about 5 separate rickshaws: 2 in the Dhaka street clip and 3 in the e-rickshaw clip. Looser or stricter linking gave between 5 and 7. So it learned the concept from roughly five different vehicles, shown from many angles as they moved.
+Test 1 trained on 141 pictures, but pictures are 0.2 seconds apart, so many are near-copies. Linking each rickshaw box to the same vehicle in neighboring pictures, the 84 rickshaw boxes in those pictures come from about 5 separate rickshaws: 2 in the Dhaka street clip and 3 in the e-rickshaw clip. Looser or stricter linking gave between 5 and 7. So it learned the concept from roughly five different vehicles, seen side-on at many positions as they moved across the frame. I counted by linking boxes and did not check each one by eye.
 
 ## Confidence cutoff on the Dhaka street test
 
