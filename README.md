@@ -72,11 +72,11 @@ Things that cost me time, and what I would suggest (rfdetr 1.11.1, supervision 0
 
 $\color{orange}{\text{Summarized by Claude (Claude Code) from the problems that came up while building this, and checked by Claude against the library versions listed. Worth confirming any single item before relying on it.}}$
 
-- **The names and the numbers don't line up.** The model returns each object as a number up to 90, with gaps, but the library's name list has 80 entries starting at zero, so a name lands on the wrong object. My people came out as "bicycle." *Suggestion:* return the names with the detections.
-- **A removed-import error points to the wrong place.** The error says to use `rfdetr.utilities`, but the class names are in `rfdetr.assets.coco_classes`. *Suggestion:* name the real location.
-- **A seventh kind of object that does not exist.** After training on six, the model occasionally returned a seventh number (11 boxes in one night clip). I filter that number out and do not know why. *Suggestion:* document the extra number, or stop returning it.
-- **The deprecation warnings name no replacement.** `RFDETRBase` and `ByteTrack` say when they will be removed, not what to use instead.
-- **Training took one extra install and one Mac-only rule.** `rfdetr[train]` (the error is clear), and wrapping the script in `if __name__ == "__main__":` (the error is Python's generic one). *Suggestion:* put both in the quickstart.
+- **Class labels are inconsistent between the model's output and the library's name list.** *Evidence:* the pretrained model returns each object as a number from 1 to 90, with gaps. The library's list of 80 names counts from zero and starts person, bicycle, car, motorcycle. So the number 1 (a person) looks up "bicycle," and the number 4 (a motorcycle) looks up "airplane." My first video labeled people "bicycle." *Suggestion:* return the names with the detections.
+- **The removed-import error points to a place that does not have the answer.** *Evidence:* importing `rfdetr.util` fails with "rfdetr.util was removed in v1.9.0. Use rfdetr.utilities instead." I checked: `rfdetr.utilities` does not contain the class names, and `rfdetr.assets.coco_classes` does. *Suggestion:* name the real location in the message.
+- **The model can return a class it was never trained on.** *Evidence:* after training on six kinds of objects, the model returned a seventh class number on 11 boxes in one night clip. I filter it out and do not know why. *Suggestion:* document it, or stop returning it.
+- **The deprecation warnings name no replacement.** *Evidence:* creating `RFDETRBase()` prints "deprecated since v1.7.0. It will be removed in v2.0.0," and creating `sv.ByteTrack()` prints "deprecated since v0.28.0. It will be removed in v0.31.0." Neither message says what to use instead. *Suggestion:* name the replacement in the message.
+- **The first training run needs one extra install and one Mac-only rule.** *Evidence:* `model.train` stops with an import error until `rfdetr[train]` is installed, and that error names the command, which is clear. On macOS the data loader then crashes with Python's generic multiprocessing message unless the call sits inside `if __name__ == "__main__":`. *Suggestion:* put both in the quickstart.
 
 ## Three questions I'd like to dig into: carts, near-duplicate frames, the edge
 
