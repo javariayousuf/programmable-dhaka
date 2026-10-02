@@ -2,7 +2,7 @@ import argparse, json, os
 from pathlib import Path
 import numpy as np, cv2
 import supervision as sv
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 
 # Builds the README pictures for a held-out test clip (default clip1, the Dhaka street): a side-by-side before/after GIF, three before/after stills,
 # and a gallery of real mistakes (old pipeline and fine-tuned model). Vehicles only, same style both sides.
@@ -94,11 +94,21 @@ def draw(img_bgr, items, size=22):
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 
-def banner(img_bgr, text):
-    pil = Image.fromarray(cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)); dr = ImageDraw.Draw(pil); f = FONT(max(16, img_bgr.shape[1] // 22))
+ORIG_HEX, AFTER_HEX = "#3B0086", "#db3069"   # palette colors: original pipeline = deep purple, after fine-tuning = raspberry
+
+
+def panel(img_bgr, text, hex_color):
+    """Colored frame and colored label tab, so busy pictures can be told apart at a glance. White gutter outside."""
+    col = rgb(hex_color)
+    h, w = img_bgr.shape[:2]
+    b = max(8, w // 60)
+    framed = cv2.copyMakeBorder(img_bgr, b, b, b, b, cv2.BORDER_CONSTANT, value=col[::-1])
+    pil = Image.fromarray(cv2.cvtColor(framed, cv2.COLOR_BGR2RGB)); dr = ImageDraw.Draw(pil); f = FONT(max(16, w // 22))
     tb = dr.textbbox((0, 0), text, font=f)
-    dr.rectangle([0, 0, tb[2] + 24, tb[3] + 20], fill=(255, 255, 255)); dr.text((12, 8), text, font=f, fill=(17, 17, 17))
-    return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
+    dr.rectangle([b, b, b + tb[2] + 24, b + tb[3] + 20], fill=col)
+    dr.text((b + 12, b + 8), text, font=f, fill=(255, 255, 255))
+    out = cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
+    return cv2.copyMakeBorder(out, 8, 8, 8, 8, cv2.BORDER_CONSTANT, value=(255, 255, 255))
 
 
 def render(iid, source, w):
@@ -117,7 +127,7 @@ def hits(pred, iid, cls=4):
 frames = sorted(files)[::3]
 pairs = []
 for iid in frames:
-    a, b = banner(render(iid, O, 480), "Original pipeline"), banner(render(iid, P, 480), "After fine-tuning")
+    a, b = panel(render(iid, O, 460), "Original pipeline", ORIG_HEX), panel(render(iid, P, 460), "After fine-tuning", AFTER_HEX)
     pairs.append(np.hstack([a, b]))
 import subprocess, tempfile, imageio_ffmpeg
 tmp = tempfile.mkdtemp()
@@ -135,7 +145,7 @@ for i in gain:
     if all(abs(i - j) >= 10 for j in pick): pick.append(i)
     if len(pick) == 3: break
 if len(pick) == 3:
-    rows = [np.hstack([banner(render(i, O, 800), "Original pipeline"), banner(render(i, P, 800), "After fine-tuning")]) for i in sorted(pick)]
+    rows = [np.hstack([panel(render(i, O, 800), "Original pipeline", ORIG_HEX), panel(render(i, P, 800), "After fine-tuning", AFTER_HEX)]) for i in sorted(pick)]
     cv2.imwrite(str(OUT / f"where_it_wins_{args.tag}.jpg"), np.vstack(rows), [cv2.IMWRITE_JPEG_QUALITY, 86])
 else:
     print("not enough real wins for a strip:", len(gain), "frames")
@@ -145,14 +155,14 @@ pick2 = []
 for i in loss:
     if all(abs(i - j) >= 10 for j in pick2): pick2.append(i)
     if len(pick2) == 3: break
-rows = [np.hstack([banner(render(i, O, 800), "Original pipeline"), banner(render(i, P, 800), "After fine-tuning")]) for i in sorted(pick2)]
+rows = [np.hstack([panel(render(i, O, 800), "Original pipeline", ORIG_HEX), panel(render(i, P, 800), "After fine-tuning", AFTER_HEX)]) for i in sorted(pick2)]
 cv2.imwrite(str(OUT / f"where_it_is_worse_{args.tag}.jpg"), np.vstack(rows), [cv2.IMWRITE_JPEG_QUALITY, 86])
 
 # 3) gallery of real mistakes
 tiles = []
 
 
-def tile(iid, cat, box, label, caption):
+def tile(iid, cat, box, label, caption, hex_color):
     img = read_blurred(f"{args.images}/{files[iid]}")
     img = draw(img, [(cat, box, label)], size=34)
     x1, y1, x2, y2 = box; cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
@@ -161,7 +171,8 @@ def tile(iid, cat, box, label, caption):
     crop = cv2.resize(img[y0:y0 + int(h), x0:x0 + int(w)], (640, 360), interpolation=cv2.INTER_AREA)
     pil = Image.fromarray(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)); canvas = Image.new("RGB", (640, 420), (255, 255, 255))
     canvas.paste(pil, (0, 0)); ImageDraw.Draw(canvas).text((12, 372), caption, font=FONT(24), fill=(17, 17, 17))
-    tiles.append(np.array(canvas))
+    ImageDraw.Draw(canvas).rectangle([0, 0, 639, 419], outline=rgb(hex_color), width=10)
+    tiles.append(np.array(ImageOps.expand(canvas, border=8, fill=(255, 255, 255))))
 
 
 def best(cands, used):
@@ -180,22 +191,22 @@ for cat_name, cid, caption in (("cart", 5, "Old pipeline: a rickshaw called a ca
             if m and not any(pc == 4 and iou(gb, pb) > 0.5 for pc, pb, _ in O.get(iid, [])):
                 c.append(((gb[2] - gb[0]) * (gb[3] - gb[1]), iid, m[0]))
     t = best(c, used)
-    if t: tile(t[1], cid, t[2], cat_name, caption)
+    if t: tile(t[1], cid, t[2], cat_name, caption, ORIG_HEX)
 
 # model boxes drawn where the answer key has nothing: kept only if I confirmed by eye that they are wrong (see AUDITED_WRONG)
 AUDITED_WRONG = set()   # (frame id, class) pairs, filled in after looking at every unmatched box
 fp = [((b[2] - b[0]) * (b[3] - b[1]), iid, b) for iid, pl in P.items() for c, b, s in pl
       if (iid, c) in AUDITED_WRONG and not any(iou(b, gb) > 0.3 for _, gb, _ in G.get(iid, []))]
 t = best(fp, used)
-if t: tile(t[1], 4, t[2], "rickshaw", "Fine-tuned: a wrong guess (audited by eye)")
+if t: tile(t[1], 4, t[2], "rickshaw", "Fine-tuned: a wrong guess (audited by eye)", AFTER_HEX)
 miss = [((b[2] - b[0]) * (b[3] - b[1]), iid, b) for iid, gl in G.items() for c, b, _ in gl
         if c == 4 and not any(iou(b, pb) > 0.1 for pc, pb, _ in P.get(iid, []))]  # nothing at all drawn on it
 t = best(miss, used)
-if t: tile(t[1], 4, t[2], "missed", "Fine-tuned: a rickshaw it did not see")
+if t: tile(t[1], 4, t[2], "missed", "Fine-tuned: a rickshaw it did not see", AFTER_HEX)
 mo = [((b[2] - b[0]) * (b[3] - b[1]), iid, pb) for iid, gl in G.items() for c, b, _ in gl if c == 4
       for pc, pb, _ in P.get(iid, []) if pc == 3 and iou(b, pb) > 0.5]
 t = best(mo, used)
-if t: tile(t[1], 3, t[2], "motorcycle", "Fine-tuned: a rickshaw called a motorcycle")
+if t: tile(t[1], 3, t[2], "motorcycle", "Fine-tuned: a rickshaw called a motorcycle", AFTER_HEX)
 while len(tiles) % 3: tiles.append(np.full_like(tiles[0], 255))
 cv2.imwrite(str(OUT / f"mistakes_gallery_{args.tag}.jpg"), cv2.cvtColor(np.vstack([np.hstack(tiles[i:i + 3]) for i in range(0, len(tiles), 3)]), cv2.COLOR_RGB2BGR),
             [cv2.IMWRITE_JPEG_QUALITY, 86])
