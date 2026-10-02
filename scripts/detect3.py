@@ -75,7 +75,7 @@ writer = imageio.get_writer(DST, fps=rate * SLOW, codec="libx264", pixelformat="
 tracks = {c: set() for c in CLASSES}
 for i, frame in enumerate(sv.get_video_frames_generator(SRC, stride=STRIDE)):
     d_all = model.predict(frame, threshold=0.3)
-    d_all = d_all[d_all.class_id < len(CLASSES)]  # drop the 7th slot the model sometimes emits
+    d_all = d_all[d_all.class_id < len(CLASSES)]  # drop any class id past the last real class (seen once with an earlier checkpoint)
     heads_src = d_all[d_all.class_id == 0]  # low threshold so the blur misses fewer people
     d = d_all[d_all.confidence >= 0.5]
     d = tracker.update_with_detections(d)

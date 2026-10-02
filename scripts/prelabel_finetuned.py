@@ -33,7 +33,7 @@ for start, end in ranges:
         images.append({"id": n, "file_name": name, "width": frame.shape[1], "height": frame.shape[0], "second": round(t, 2)})
         d = model.predict(frame, threshold=0.4)
         for (x1, y1, x2, y2), c, s in zip(d.xyxy, d.class_id, d.confidence):
-            if int(c) >= len(CLASSES): continue          # the model emits a 7th slot that is not a real class
+            if int(c) >= len(CLASSES): continue          # an earlier checkpoint once returned a class id past the last real class (not reproduced since); skip it
             annos.append({"id": len(annos) + 1, "image_id": n, "category_id": int(c) + 1, "bbox": [float(x1), float(y1), float(x2 - x1), float(y2 - y1)],
                           "area": float((x2 - x1) * (y2 - y1)), "iscrowd": 0, "score": round(float(s), 3)})
         n += 1

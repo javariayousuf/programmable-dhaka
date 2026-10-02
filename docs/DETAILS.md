@@ -70,6 +70,10 @@ For the night and rainy clips I built a small page that runs only on my own mach
 
 The corrections chart counts boxes I relabeled, resized or added. It mixes two kinds of first guess (the original pipeline for the first three clips, a fine-tuned model for night and rainy), so only the first three are a like-for-like comparison. They are also not counted exactly like the last two, where I answered once per vehicle.
 
+## One observation I could not reproduce
+
+With an earlier checkpoint (trained on the rickshaw street and e-rickshaw clips, six classes), the night clip's first guess had 11 boxes with a class number past the last real class (see `labels/night/original_prelabel.coco.json`). The final model returned none: 0 of 921 boxes at a 0.5 cutoff and 0 of 1074 at 0.4. The earlier checkpoint was overwritten, so I cannot test it again. Treat it as unconfirmed. The scripts still skip any out-of-range class number, to be safe.
+
 ## Other limits
 
 - Three short clips per test, one scene each. This shows the loop, and it is not a benchmark.

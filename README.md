@@ -72,15 +72,39 @@ Pictures of the mistakes are in the [details](docs/DETAILS.md).
 
 ## Product feedback
 
-Things that cost me time, and what I would suggest (rfdetr 1.11.1, supervision 0.30.6).
+Tested with rfdetr 1.11.1 and supervision 0.30.6, on Python 3.14 and macOS (Apple silicon). Each item shows what I ran, what came back, and what I would change.
 
 <img src="media/claude_orange.png" width="12" height="12" alt=""> Summarized by Claude Code.
 
-- **Class labels are inconsistent between the model's output and the library's name list.** *Evidence:* the pretrained model returns each object as a number from 1 to 90, with gaps. The library's list of 80 names counts from zero and starts person, bicycle, car, motorcycle. So the number 1 (a person) looks up "bicycle," and the number 4 (a motorcycle) looks up "airplane." My first video labeled people "bicycle." *Suggestion:* return the names with the detections.
-- **The removed-import error points to a place that does not have the answer.** *Evidence:* importing `rfdetr.util` fails with "rfdetr.util was removed in v1.9.0. Use rfdetr.utilities instead." I checked: `rfdetr.utilities` does not contain the class names, and `rfdetr.assets.coco_classes` does. *Suggestion:* name the real location in the message.
-- **The model can return a class it was never trained on.** *Evidence:* after training on six kinds of objects, the model returned a seventh class number on 11 boxes in one night clip. I filter it out and do not know why. *Suggestion:* document it, or stop returning it.
-- **The deprecation warnings name no replacement.** *Evidence:* creating `RFDETRBase()` prints "deprecated since v1.7.0. It will be removed in v2.0.0," and creating `sv.ByteTrack()` prints "deprecated since v0.28.0. It will be removed in v0.31.0." Neither message says what to use instead. *Suggestion:* name the replacement in the message.
-- **The first training run needs one extra install and one Mac-only rule.** *Evidence:* `model.train` stops with an import error until `rfdetr[train]` is installed, and that error names the command, which is clear. On macOS the data loader then crashes with Python's generic multiprocessing message unless the call sits inside `if __name__ == "__main__":`. *Suggestion:* put both in the quickstart.
+**1. `model.class_names` does not match `class_id`.**
+
+```python
+d = model.predict(image, threshold=0.5)          # model = RFDETRBase()
+d.class_id                                       # [1, 4, 1, 1, ...]
+[model.class_names[i] for i in d.class_id]       # ['bicycle', 'airplane', 'bicycle', 'bicycle', ...]
+d.data["class_name"]                             # ['person', 'motorcycle', 'person', 'person', ...]
+```
+
+The ids are COCO's (1 to 90, with gaps) and the list holds 80 names counted from zero, so looking a name up by id lands on the wrong object. I did that, and my first video labeled people "bicycle." The right names were in `d.data["class_name"]`, which I found later. *Suggestion:* make `class_names` a dictionary keyed by class id, or say in its docstring to use `detections.data["class_name"]`.
+
+**2. The removed-import error points to a place that does not have the answer.**
+
+```python
+import rfdetr.util   # ImportError: rfdetr.util was removed in v1.9.0. Use rfdetr.utilities instead.
+```
+
+`rfdetr.utilities` does not contain the class names (`hasattr(rfdetr.utilities, "COCO_CLASS_NAMES")` is `False`). They are in `rfdetr.assets.coco_classes`. *Suggestion:* name the real location in the message.
+
+**3. The deprecation warnings leave out the replacement that the docs give.**
+
+```python
+RFDETRBase()      # FutureWarning: The `RFDETRBase` was deprecated since v1.7.0. It will be removed in v2.0.0.
+sv.ByteTrack()    # FutureWarning: The `ByteTrack` was deprecated since v0.28.0. It will be removed in v0.31.0.
+```
+
+Neither message says what to use instead. The docs do: `RFDETRBase` is replaced by `RFDETRSmall` (or Nano, Medium, Large) in the [RF-DETR migration guide](https://rfdetr.roboflow.com/latest/getting-started/migration/), and `sv.ByteTrack` by `ByteTrackTracker` from the `trackers` package, with `update_with_detections()` renamed `update()`, on [supervision's deprecated page](https://supervision.roboflow.com/latest/deprecated/). *Suggestion:* put the replacement in the warning text.
+
+**4. The first training run needs one extra install and one Mac-only rule.** `model.train(...)` stops with an import error until `rfdetr[train]` is installed, and that error names the command, which is clear. On macOS the data loader then crashes with Python's generic multiprocessing error unless the call sits inside `if __name__ == "__main__":`. *Suggestion:* put both in the quickstart.
 
 ## Questions I'd like to dig into
 
