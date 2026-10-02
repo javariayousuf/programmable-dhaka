@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+runs/
+*.pth
+*.ckpt
+train_dataset/
+labels/*/images
+exp_data/
+.DS_Store
+train_dataset*/

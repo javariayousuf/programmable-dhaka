@@ -1,0 +1,6 @@
+{"note": "Final model (trained on clips 2, 3, night, rain) scored on the held-out Dhaka street clip at different confidence cutoffs. The headline numbers use 0.5, the same cutoff the videos use. Choosing the best cutoff on the test clip would be tuning on the test.",
+ "cutoffs": {"0.5": {"precision": 0.82, "recall": 0.41, "f1": 0.54, "rickshaw_found_of_39": 10, "cart_found_of_49": 1, "motorcycle_found_of_68": 47},
+             "0.4": {"precision": 0.77, "recall": 0.46, "f1": 0.58, "rickshaw_found_of_39": 15, "cart_found_of_49": 2, "motorcycle_found_of_68": 51},
+             "0.3": {"precision": 0.66, "recall": 0.57, "f1": 0.61, "rickshaw_found_of_39": 21, "cart_found_of_49": 7, "motorcycle_found_of_68": 56},
+             "0.2": {"precision": 0.50, "recall": 0.71, "f1": 0.59, "rickshaw_found_of_39": 34, "cart_found_of_49": 15, "motorcycle_found_of_68": 59}},
+ "original_pipeline": {"precision": 0.82, "recall": 0.80, "f1": 0.81}}

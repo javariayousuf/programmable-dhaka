@@ -1,0 +1,8 @@
+numpy==2.5.3
+opencv-python==5.0.0.93
+pillow==12.3.0
+rfdetr==1.11.1
+supervision==0.30.6
+torch==2.14.1
+transformers==5.18.0
+yt-dlp==2026.8.19

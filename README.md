@@ -1,0 +1,123 @@
+# programmable-dhaka
+
+**RF-DETR, Roboflow's open source object detection model, was trained on 80 everyday kinds of objects (people, cars, bicycles, motorcycles and so on). It doesn't know what a rickshaw is. I used RF-DETR and Roboflow's supervision library, on a Mac, to teach it, using street footage from Dhaka, Bangladesh.**
+
+![The fine-tuned model on a Dhaka street clip it never trained on](media/hero_dhaka_street.gif)
+
+*The Dhaka street clip, which the model never trained on. Heads are blurred. It gets some things right and misses others, and this page shows both.*
+
+## Why Dhaka
+
+I'm a Bangladeshi-American who has been to Dhaka, Bangladesh, so I know it has unique movement of people with different modalities, really unexpected pathways of travel, non conformity in shapes and colors, culturally vibrant. I wanted to stress test the capabilities of the open source model with something I knew was complex.
+
+## What I used
+
+All open source.
+
+- **[RF-DETR](https://github.com/roboflow/rf-detr)** looks at a picture and draws a box around each thing it recognizes.
+- **[supervision](https://github.com/roboflow/supervision)** is Roboflow's library for the pieces around a model: drawing boxes, following a vehicle from frame to frame, smoothing, blurring.
+- **[Grounding DINO](https://huggingface.co/IDEA-Research/grounding-dino-tiny)** (IDEA Research, via Hugging Face) finds things from a written description like "a push cart". I used it to draft first labels.
+- PyTorch, OpenCV and matplotlib for the rest.
+
+## What using it was like
+
+I wanted to understand the product by using it. I found it easy to stand up and onboard, and the speed is good.
+
+- A few lines of Python ran the pretrained model on my own video.
+- Fine-tuning (continuing to train the model on my own labeled pictures) took about 10 to 15 minutes for 141 pictures, on a Mac.
+- It runs at about 30 milliseconds per picture. The model file is about 127 MB.
+- Accuracy depends on the footage, and that is most of what follows.
+
+## The first guess
+
+To get started I labeled footage with a first-pass pipeline: RF-DETR plus Grounding DINO. I then corrected it by hand, with one rule: **anything that carries a passenger behind a driver is a rickshaw**, pedal or motorized.
+
+It got things wrong in specific ways. On a night clip it drew 425 "rickshaw" boxes. After my corrections only 58 are rickshaws. Most of the rest were cars.
+
+| Night traffic | Rickshaw | Car | Motorcycle |
+|---|---|---|---|
+| First guess | 425 | 32 | 0 |
+| After my corrections | 58 | 379 | 26 |
+
+![Night traffic](media/night_traffic.gif)
+
+*Night traffic. The model trained on this clip, so it is not a test.*
+
+## Something I noticed
+
+I changed far more of the model's guesses on the clips with less variety than on the varied one.
+
+![How much of the first guess I changed](media/chart_corrections.png)
+
+On the busy Dhaka street, with people, motorcycles, bicycles, carts and rickshaws mixed together, I changed 23% of the boxes. On the two clips that were mostly rickshaws I changed 62% and 67%. Night traffic was 86%, almost all of it cars called rickshaws. My reading, which I have not tested: the first-pass tools already handle everyday objects well, so a scene full of everyday objects needs little fixing, and a scene that is mostly the one thing they have no word for needs fixing nearly everywhere.
+
+## Does fine-tuning help? It depends on the footage.
+
+Each test scores the model on a clip it never trained on, against my corrected labels.
+
+![Three tests](media/chart_two_tests.png)
+
+**Test 1: a street like the ones it trained on.** I trained on the Dhaka street and e-rickshaw clips and tested on the rickshaw street clip. The original pipeline found 45 of 163 rickshaws and called 118 of them carts or bicycles. The fine-tuned model found about 130 (I trained it twice: 131 and 135).
+
+![What happened to every rickshaw on the rickshaw street clip](media/chart_rickshaw_outcomes_street.png)
+
+![Before and after](media/before_after_rickshaw_street.gif)
+
+![Three frames where it gained](media/where_it_wins_rickshaw_street.jpg)
+
+**Test 2: a street unlike its training footage.** I trained on the rickshaw street and e-rickshaw clips and tested on the Dhaka street clip. It did worse than the original pipeline (0.44 against 0.81). Adding the night and rainy clips helped, to 0.54, but it stayed below. The biggest gap is carts: the original pipeline found 41 of 49 and the fine-tuned model found 1. The carts in this market are metal trolleys piled with goods, and the training footage had banana carts.
+
+![What happened to every rickshaw on the Dhaka street clip](media/chart_rickshaw_outcomes_dhaka.png)
+
+![Found, by kind of vehicle](media/chart_per_class.png)
+
+![Where it did worse](media/where_it_is_worse_dhaka.jpg)
+
+![Before and after on the Dhaka street](media/before_after_dhaka.gif)
+
+My answer keys started as the original pipeline's own boxes, which flatters it. It still lost on the rickshaw street, so that does not explain Test 1, but it probably explains some of the gap in Test 2. More in [docs/DETAILS.md](docs/DETAILS.md).
+
+**The takeaway.** Fine-tuning fixed what it was shown, on scenes like the ones it was shown. It did not carry over to a scene full of things it had never seen, and the text-prompt pipeline was better there. A hybrid is the obvious next step, and so is footage that includes the market's carts.
+
+## What it still gets wrong
+
+![Mistakes on the rickshaw street](media/mistakes_gallery_rickshaw_street.jpg)
+
+![Mistakes on the Dhaka street](media/mistakes_gallery_dhaka.jpg)
+
+- Trucks are not a class, so the model guesses, and a truck often comes out as a rickshaw.
+- Carts and rickshaws in a crowd are the hardest cases.
+- People were not hand-reviewed, so they are left out of every score.
+
+## What I'd tell someone trying this
+
+- **It pays off fast on footage like yours.** A few dozen labeled pictures and about 10 to 15 minutes of training took rickshaws from mostly wrong to mostly right, on a laptop.
+- **Don't expect it to carry over to scenes it has never seen.** Collect the odd cases on purpose: other carts, night, rain, partly hidden vehicles.
+- **Give look-alikes their own name.** Without a "car" and a "truck", they get called the thing you care about.
+- **Test on footage you set aside,** and say what confidence cutoff you used.
+- **The speed is a good start.** About 30 milliseconds per picture on a laptop. I have not tested an edge device, and that is the next thing I would check.
+
+## Rough edges I hit (rfdetr 1.11.1, supervision 0.30.6)
+
+- The pretrained model returns category numbers 1 to 90 with gaps, but the name list the library ships runs 0 to 79. Mixing them shifted every label by one, and my first video tagged people as "bicycle."
+- An import path from older examples (`rfdetr.util`) was removed in version 1.9. The class names now live in `rfdetr.assets.coco_classes`.
+- Training needs the `rfdetr[train]` extra, and on macOS it must run inside `if __name__ == "__main__":` or the data loader crashes.
+- My fine-tuned model sometimes returned a seventh class number that does not exist. I filter it out.
+- OpenCV's `mp4v` video output showed as a solid green screen in some players. H.264 with `yuv420p` fixes it.
+
+## More
+
+- [Details and caveats](docs/DETAILS.md): scores, the cutoff table, how the labels were corrected, limits.
+- [Reproduce it](docs/REPRODUCE.md): commands and layout.
+
+## Footage credits
+
+All footage is from [Pexels](https://www.pexels.com) under the Pexels License. Everything shown here is altered, and the original videos are not in this repo.
+
+- Dhaka street ("Suhrawardy Udyan TSC") by Faisal Ibne Kalam: [video](https://www.pexels.com/video/suhrawardy-udyan-tsc-26689635/), [profile](https://www.pexels.com/@faisal-ibne-kalam-774996459/)
+- e-rickshaws ("Bustling Indian Street with Auto Rickshaws") by md Jahangir alam, filmed in India, not Dhaka: [video](https://www.pexels.com/video/bustling-indian-street-with-auto-rickshaws-38248681/), [profile](https://www.pexels.com/@mdjahangir/)
+- Rickshaw street ("Colorful Rickshaws on Bustling Street") by Somogro Bangladesh: [video](https://www.pexels.com/video/colorful-rickshaws-on-bustling-street-36526831/), [profile](https://www.pexels.com/@somogrobangladesh/)
+- Night traffic ("Vibrant City Night Traffic Scene") by Jubayer Hossain, tagged Dhaka and Chittagong: [video](https://www.pexels.com/video/vibrant-city-night-traffic-scene-35041521/), [profile](https://www.pexels.com/@jubayer-wh/)
+- Rainy walk ("Rainy Day Street Scene in Dhaka, Bangladesh") by Latiful Jawad, labels only: [video](https://www.pexels.com/video/rainy-day-street-scene-in-dhaka-bangladesh-29662763/), [profile](https://www.pexels.com/@latiful-jawad-431220084/)
+
+Created by J. Yousuf.
