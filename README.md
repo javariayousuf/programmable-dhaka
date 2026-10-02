@@ -10,8 +10,7 @@
 
 I wanted to understand the product by using it. I found it easy to stand up and onboard, and the speed is good.
 
-- **Almost no setup.** I never told RF-DETR how many kinds of things to learn. It read them from my label files.
-- **A head start on labeling.** The pretrained model draws a first set of labels, so you fix mistakes instead of drawing every box yourself. On the busy Dhaka street I only had to change 39 of 168 boxes. On the clips that were mostly rickshaws it needed far more fixing, about two thirds.
+- **Almost no setup, and a head start on labeling.** All I needed was videos I downloaded. The pretrained model drew a first set of labels, so I fixed mistakes instead of drawing every box myself. On the busy Dhaka street I only had to change 39 of 168 boxes. On the clips that were mostly rickshaws it needed far more fixing, about two thirds.
 - **RF-DETR learned an unknown concept from a handful of examples.** It had no word for a rickshaw. I trained it on 141 pictures, but they show only about five different rickshaws, many of them near-copies of each other. About 10 to 15 minutes of training later, on a laptop, it found about 130 of 163 rickshaws in a clip it had never seen, up from 45 with the original setup.
 - **Easy to customize and tune.** supervision let me change how vehicles are followed, how steady the boxes are, what gets blurred, and how everything is drawn, with a few settings each.
 - **Everything ran on one laptop,** at about 30 milliseconds per picture.
