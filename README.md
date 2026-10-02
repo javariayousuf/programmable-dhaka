@@ -6,6 +6,24 @@
 
 *The Dhaka street clip, which RF-DETR never trained on. Blue is a person, pink a rickshaw, purple a motorcycle, amber a bicycle, yellow-green a cart. It finds most of the motorcycles and bicycles, some of the rickshaws, and almost none of the carts. Heads are blurred.*
 
+> **In 30 seconds**
+> - **What:** I taught Roboflow's RF-DETR to identify rickshaws, using street video from Dhaka.
+> - **Result:** on a street like its training footage it found about 130 of 163 rickshaws, up from 45. On a very different street it did worse than the original setup, mostly because it missed the carts.
+> - **Lesson:** fine-tuning works on what it is shown, so show it the messy cases.
+
+## Contents
+
+- [Reasons to try Roboflow's open source tools](#reasons-to-try-roboflows-open-source-tools)
+- [Why Dhaka](#why-dhaka)
+- [What I used](#what-i-used)
+- [The first guess](#the-first-guess)
+- [Something I noticed](#something-i-noticed)
+- [Does fine-tuning help? It depends on the footage.](#does-fine-tuning-help-it-depends-on-the-footage)
+- [What it still gets wrong](#what-it-still-gets-wrong)
+- [Product feedback](#product-feedback)
+- [More](#more)
+- [Footage credits](#footage-credits)
+
 ## Reasons to try Roboflow's open source tools
 
 I wanted to understand the product by using it. I found it easy to stand up and onboard, and the speed is good.
@@ -81,9 +99,9 @@ My answer keys started as the original pipeline's own boxes, which flatters it. 
 - Carts and rickshaws in a crowd are the hardest cases.
 - People were not hand-reviewed, so they are left out of every score.
 
-## Product feedback (rfdetr 1.11.1, supervision 0.30.6)
+## Product feedback
 
-Things that cost me time, and what I would suggest. Each one I checked against the library before writing it down.
+Things that cost me time, and what I would suggest (rfdetr 1.11.1, supervision 0.30.6). Each one I checked against the library before writing it down.
 
 - **The names and the numbers don't line up.** The model reports each object as a number (person is 1, bicycle is 2, and so on up to 90, with some numbers skipped). The list of 80 names that comes with the library starts at zero. Looking up a name by that number lands on the wrong object, and every label in my first video was off by one: people came out as "bicycle." *Suggestion:* return the names, or a number-to-name dictionary, along with the detections.
 - **The error for a removed import points to the wrong place.** `rfdetr.util` was removed in version 1.9. The error says to use `rfdetr.utilities`, but the class names are not there. They are in `rfdetr.assets.coco_classes`. *Suggestion:* name the real location in the message.
