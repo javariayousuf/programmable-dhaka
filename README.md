@@ -11,15 +11,14 @@
 ## Contents
 
 - [Reasons to try Roboflow's open source tools](#reasons-to-try-roboflows-open-source-tools)
-- [Why I picked Dhaka: a scene I knew would stress the model](#why-i-picked-dhaka-a-scene-i-knew-would-stress-the-model)
-- [What I observed: the more a scene was just rickshaws, the more labels I had to correct](#what-i-observed-the-more-a-scene-was-just-rickshaws-the-more-labels-i-had-to-correct)
-- [What I found: fine-tuned RF-DETR learned rickshaws on a similar street, and missed the carts on a different one](#what-i-found-fine-tuned-rf-detr-learned-rickshaws-on-a-similar-street-and-missed-the-carts-on-a-different-one)
-- [Limits: trucks, crowded carts, unreviewed people](#limits-trucks-crowded-carts-unreviewed-people)
-- [Product feedback: five things that cost me time](#product-feedback-five-things-that-cost-me-time)
-- [Three questions I'd like to dig into: carts, near-duplicate frames, the edge](#three-questions-id-like-to-dig-into-carts-near-duplicate-frames-the-edge)
-- [More: scores, pictures, reproduce steps and tips](#more-scores-pictures-reproduce-steps-and-tips)
-- [Built with RF-DETR, supervision, Grounding DINO and Claude Code](#built-with-rf-detr-supervision-grounding-dino-and-claude-code)
-- [Footage credits: five Pexels clips and their creators](#footage-credits-five-pexels-clips-and-their-creators)
+- [Why Dhaka](#why-dhaka)
+- [What I found](#what-i-found)
+- [Limits](#limits)
+- [Product feedback](#product-feedback)
+- [Questions I'd like to dig into](#questions-id-like-to-dig-into)
+- [Details, reproduce steps and tips](#details-reproduce-steps-and-tips)
+- [Built with](#built-with)
+- [Footage credits](#footage-credits)
 
 ## Reasons to try Roboflow's open source tools
 
@@ -30,21 +29,15 @@ I wanted to understand the product by using it. I found it easy to stand up and 
 - **Easy to customize and tune.** supervision let me change how vehicles are followed, how steady the boxes are, what gets blurred, and how everything is drawn, with a few settings each.
 - **Everything ran on one laptop,** at about 30 milliseconds per picture.
 
-## Why I picked Dhaka: a scene I knew would stress the model
+## Why Dhaka
 
 I'm a Bangladeshi-American who has spent time in Dhaka, Bangladesh. I know from experience that there are really unique movement patterns: people with different modalities, really unexpected pathways of travel, non conformity in shapes and colors, culturally vibrant. I wanted to stress test the capabilities of the open source model with something I knew was complex.
 
-## What I observed: the more a scene was just rickshaws, the more labels I had to correct
+## What I found
 
-To get started I corrected a first set of labels by hand, with one rule: **anything that carries a passenger behind a driver is a rickshaw**, pedal or motorized. For the first three clips the first set came from the original pipeline. I corrected far more of the original pipeline's guesses on the clips with less variety than on the varied one.
+I corrected the first-pass labels by hand, with one rule: **anything that carries a passenger behind a driver is a rickshaw**, pedal or motorized. "Fine-tuned" below means RF-DETR trained further on those corrected labels. Each test scores the model on a clip it never trained on, against my corrected labels. The overall score runs from 0 to 1, and higher is better. These are small tests: each model trained on only two to four short clips, so read the numbers as a direction, not a benchmark.
 
-![How much of the first guess I corrected](media/chart_corrections.png)
-
-On the busy Dhaka street I corrected 23% of the boxes. On the two clips that were mostly rickshaws I corrected 62% and 67%. My guess, which I have not tested: the first-pass tools already handle everyday objects, so a scene full of them needs little correcting, and a scene that is mostly the one thing they have no word for needs correcting nearly everywhere. (The night and rainy clips started from a model already fine-tuned on those two, so they are not a like-for-like comparison. At night 86% of the boxes needed correcting, mostly cars the model had called rickshaws.)
-
-## What I found: fine-tuned RF-DETR learned rickshaws on a similar street, and missed the carts on a different one
-
-"Fine-tuned" means RF-DETR trained further on my own corrected labels. Each test scores the model on a clip it never trained on, against my corrected labels. The overall score runs from 0 to 1, and higher is better. These are small tests: each model trained on only two to four short clips, so read the numbers as a direction, not a benchmark.
+### Fine-tuned RF-DETR learned rickshaws on a similar street, and missed the carts on a different one
 
 ![Three tests](media/chart_two_tests.png)
 
@@ -60,7 +53,15 @@ My answer keys (the corrected labels each test is scored against) started as the
 
 **The takeaway.** The two approaches fail in opposite ways. The original pipeline found most of the market's carts, but called rickshaws carts and bicycles. The fine-tuned model named rickshaws well, but missed the carts because it had never been shown that kind. Each is strong where the other is weak, so the next step is to use both, and to train on footage that includes the market's carts.
 
-## Limits: trucks, crowded carts, unreviewed people
+### The more a scene was just rickshaws, the more labels I had to correct
+
+For the first three clips the first set of labels came from the original pipeline. I corrected far more of the original pipeline's guesses on the clips with less variety than on the varied one.
+
+![How much of the first guess I corrected](media/chart_corrections.png)
+
+On the busy Dhaka street I corrected 23% of the boxes. On the two clips that were mostly rickshaws I corrected 62% and 67%. My guess, which I have not tested: the first-pass tools already handle everyday objects, so a scene full of them needs little correcting, and a scene that is mostly the one thing they have no word for needs correcting nearly everywhere. (The night and rainy clips started from a model already fine-tuned on those two, so they are not a like-for-like comparison. At night 86% of the boxes needed correcting, mostly cars the model had called rickshaws.)
+
+## Limits
 
 - **Trucks are my choice, and I would fix it.** I never gave trucks their own label, so RF-DETR had no name for them and guessed. A truck often came out as a rickshaw. I would add a truck class and rerun.
 - **Carts and rickshaws in a crowd** are the hardest cases.
@@ -68,7 +69,7 @@ My answer keys (the corrected labels each test is scored against) started as the
 
 Pictures of the mistakes are in the [details](docs/DETAILS.md).
 
-## Product feedback: five things that cost me time
+## Product feedback
 
 Things that cost me time, and what I would suggest (rfdetr 1.11.1, supervision 0.30.6).
 
@@ -80,23 +81,23 @@ Things that cost me time, and what I would suggest (rfdetr 1.11.1, supervision 0
 - **The deprecation warnings name no replacement.** *Evidence:* creating `RFDETRBase()` prints "deprecated since v1.7.0. It will be removed in v2.0.0," and creating `sv.ByteTrack()` prints "deprecated since v0.28.0. It will be removed in v0.31.0." Neither message says what to use instead. *Suggestion:* name the replacement in the message.
 - **The first training run needs one extra install and one Mac-only rule.** *Evidence:* `model.train` stops with an import error until `rfdetr[train]` is installed, and that error names the command, which is clear. On macOS the data loader then crashes with Python's generic multiprocessing message unless the call sits inside `if __name__ == "__main__":`. *Suggestion:* put both in the quickstart.
 
-## Three questions I'd like to dig into: carts, near-duplicate frames, the edge
+## Questions I'd like to dig into
 
 - Could Grounding DINO (which finds things from a written description) and the fine-tuned model work together, so the carts get found too?
 - How should near-duplicate frames (stills a fraction of a second apart that look almost identical) be handled when labeling video footage? In one test, 36 pictures did about as well as 141.
 - Would RF-DETR still be fast enough at the edge, on the small computer that sits next to a camera? I measured about 30 milliseconds per picture on a laptop and have not measured a small device.
 
-## More: scores, pictures, reproduce steps and tips
+## Details, reproduce steps and tips
 
 - [Details and caveats](docs/DETAILS.md): scores, pictures, how the labels were corrected, limits.
 - [Reproduce it](docs/REPRODUCE.md): commands and layout.
 - [Tips and learnings](docs/LEARNINGS.md): what I'd tell someone trying this.
 
-## Built with RF-DETR, supervision, Grounding DINO and Claude Code
+## Built with
 
 [RF-DETR](https://github.com/roboflow/rf-detr), [supervision](https://github.com/roboflow/supervision), [Grounding DINO](https://huggingface.co/IDEA-Research/grounding-dino-tiny) (IDEA Research, via Hugging Face), PyTorch, OpenCV, matplotlib, and [Claude Code](https://claude.com/claude-code).
 
-## Footage credits: five Pexels clips and their creators
+## Footage credits
 
 All footage is from [Pexels](https://www.pexels.com) under the Pexels License. Everything shown here is altered, and the original videos are not in this repo.
 
