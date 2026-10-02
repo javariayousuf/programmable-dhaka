@@ -61,7 +61,7 @@ On the busy Dhaka street I corrected 23% of the boxes. On the two clips that wer
 
 My answer keys (the corrected labels each test is scored against) started as the original pipeline's own boxes, which flatters the original pipeline. The original pipeline still lost on the rickshaw street, so that does not explain Test 1, but that caveat probably explains some of the gap in Test 2. More in [docs/DETAILS.md](docs/DETAILS.md).
 
-**The takeaway.** Fine-tuning worked on what it was shown, on scenes like the ones it was shown. The fine-tuned model did not carry over to a scene with kinds of carts it had not seen, and the original pipeline, which finds carts from a written description, was better there. A hybrid is the obvious next step, and so is footage that includes the market's carts.
+**The takeaway.** The two approaches fail in opposite ways. The original pipeline found most of the market's carts, but called rickshaws carts and bicycles. The fine-tuned model named rickshaws well, but missed the carts because it had never been shown that kind. Each is strong where the other is weak, so the next step is to use both, and to train on footage that includes the market's carts.
 
 ## Limits: trucks, crowded carts, unreviewed people
 
