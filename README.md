@@ -21,7 +21,7 @@
 - [Product feedback: five things that cost me time](#product-feedback-five-things-that-cost-me-time)
 - [Three questions I'd like to dig into: carts, near-duplicate frames, the edge](#three-questions-id-like-to-dig-into-carts-near-duplicate-frames-the-edge)
 - [More: scores, pictures, reproduce steps and tips](#more-scores-pictures-reproduce-steps-and-tips)
-- [Built with RF-DETR, supervision and Grounding DINO](#built-with-rf-detr-supervision-and-grounding-dino)
+- [Built with RF-DETR, supervision, Grounding DINO and Claude Code](#built-with-rf-detr-supervision-grounding-dino-and-claude-code)
 - [Footage credits: five Pexels clips and their creators](#footage-credits-five-pexels-clips-and-their-creators)
 
 ## Reasons to try Roboflow's open source tools
@@ -93,9 +93,9 @@ Things that cost me time, and what I would suggest (rfdetr 1.11.1, supervision 0
 - [Reproduce it](docs/REPRODUCE.md): commands and layout.
 - [Tips and learnings](docs/LEARNINGS.md): what I'd tell someone trying this.
 
-## Built with RF-DETR, supervision and Grounding DINO
+## Built with RF-DETR, supervision, Grounding DINO and Claude Code
 
-[RF-DETR](https://github.com/roboflow/rf-detr), [supervision](https://github.com/roboflow/supervision), [Grounding DINO](https://huggingface.co/IDEA-Research/grounding-dino-tiny) (IDEA Research, via Hugging Face), PyTorch, OpenCV, matplotlib.
+[RF-DETR](https://github.com/roboflow/rf-detr), [supervision](https://github.com/roboflow/supervision), [Grounding DINO](https://huggingface.co/IDEA-Research/grounding-dino-tiny) (IDEA Research, via Hugging Face), PyTorch, OpenCV, matplotlib, and [Claude Code](https://claude.com/claude-code).
 
 ## Footage credits: five Pexels clips and their creators
 
