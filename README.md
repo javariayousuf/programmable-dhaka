@@ -68,7 +68,9 @@ Pictures of the mistakes are in the [details](docs/DETAILS.md).
 
 ## Product feedback: five things that cost me time
 
-Things that cost me time, and what I would suggest (rfdetr 1.11.1, supervision 0.30.6). **Summarized by Claude (Claude Code) from the problems that came up while building this, and checked by Claude against the library versions listed.** Worth confirming any single item before relying on it.
+Things that cost me time, and what I would suggest (rfdetr 1.11.1, supervision 0.30.6).
+
+$\color{orange}{\text{Summarized by Claude (Claude Code) from the problems that came up while building this, and checked by Claude against the library versions listed. Worth confirming any single item before relying on it.}}$
 
 - **The names and the numbers don't line up.** The model returns each object as a number up to 90, with gaps, but the library's name list has 80 entries starting at zero, so a name lands on the wrong object. My people came out as "bicycle." *Suggestion:* return the names with the detections.
 - **A removed-import error points to the wrong place.** The error says to use `rfdetr.utilities`, but the class names are in `rfdetr.assets.coco_classes`. *Suggestion:* name the real location.
