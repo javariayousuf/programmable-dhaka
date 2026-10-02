@@ -10,21 +10,11 @@
 
 I wanted to understand the product by using it. I found it easy to stand up and onboard, and the speed is good.
 
-- **It learned the word "rickshaw" from 141 pictures.** RF-DETR had no word for a rickshaw. After about 10 to 15 minutes of training on a laptop, it found about 130 of 163 rickshaws in a clip it had never seen, up from 45 with the original setup.
-- **Almost no setup.** I never told it how many kinds of things to learn. It read them from my label files.
-- **Tracking, smoothing and blurring fit in a loop of about 20 lines.** supervision supplied the tracker that follows a vehicle between frames, the smoother that steadies jumpy boxes, and the blur.
-- **On the busy Dhaka street I kept 129 of 168 first-guess boxes as drawn.** The pretrained model drafted the labels, and I corrected the rest.
-- **It all ran on one laptop,** at about 30 milliseconds per picture.
-
-## What I'd tell someone trying this
-
-- **It pays off fast when the new footage looks like what you trained on.** In the first test below, 141 labeled pictures and about 10 to 15 minutes of training on a laptop took rickshaws from 45 found out of 163 to about 130.
-- **Don't expect it to carry over to scenes it has never seen.** In the second test it did worse than the original pipeline. Collect the odd cases on purpose: other kinds of carts, night, rain, partly hidden vehicles.
-- **Give look-alikes their own name.** Without a "car" and a "truck", they get called the thing you care about.
-- **Test on footage you set aside,** and say what confidence cutoff you used.
-- **The speed is a good start.** About 30 milliseconds per picture on a laptop. I have not tested an edge device, and that is the next thing I would check.
-
-The rest of this page is how I found that out.
+- **RF-DETR learned an unknown concept from a handful of examples.** It had no word for a rickshaw. I trained it on 141 pictures, but they show only about five different rickshaws, many of them near-copies of each other. About 10 to 15 minutes of training later, on a laptop, it found about 130 of 163 rickshaws in a clip it had never seen, up from 45 with the original setup.
+- **Almost no setup.** I never told RF-DETR how many kinds of things to learn. It read them from my label files.
+- **Easy to customize and tune.** supervision let me change how vehicles are followed, how steady the boxes are, what gets blurred, and how everything is drawn, with a few settings each.
+- **A head start on labeling.** The pretrained model drafts the labels, so you correct instead of drawing everything from scratch. On the busy Dhaka street I kept 129 of 168 first-guess boxes as drawn (on scenes that were mostly rickshaws, only about a third).
+- **Everything ran on one laptop,** at about 30 milliseconds per picture.
 
 ## Why Dhaka
 
@@ -112,6 +102,7 @@ My answer keys started as the original pipeline's own boxes, which flatters it. 
 
 - [Details and caveats](docs/DETAILS.md): scores, the cutoff table, how the labels were corrected, limits.
 - [Reproduce it](docs/REPRODUCE.md): commands and layout.
+- [Tips and learnings](docs/LEARNINGS.md): what I'd tell someone trying this.
 
 ## Footage credits
 
