@@ -6,6 +6,25 @@
 
 *The Dhaka street clip, which the model never trained on. Heads are blurred. It gets some things right and misses others, and this page shows both.*
 
+## What using it was like
+
+I wanted to understand the product by using it. I found it easy to stand up and onboard, and the speed is good.
+
+- A few lines of Python ran the pretrained model on my own video.
+- Fine-tuning (continuing to train the model on my own labeled pictures) took about 10 to 15 minutes for 141 pictures, on a Mac.
+- It runs at about 30 milliseconds per picture. The model file is about 127 MB.
+- Accuracy depends on the footage, and that is most of what follows.
+
+## What I'd tell someone trying this
+
+- **It pays off fast when the new footage looks like what you trained on.** In the first test below, 141 labeled pictures and about 10 to 15 minutes of training on a laptop took rickshaws from 45 found out of 163 to about 130.
+- **Don't expect it to carry over to scenes it has never seen.** In the second test it did worse than the original pipeline. Collect the odd cases on purpose: other kinds of carts, night, rain, partly hidden vehicles.
+- **Give look-alikes their own name.** Without a "car" and a "truck", they get called the thing you care about.
+- **Test on footage you set aside,** and say what confidence cutoff you used.
+- **The speed is a good start.** About 30 milliseconds per picture on a laptop. I have not tested an edge device, and that is the next thing I would check.
+
+The rest of this page is how I found that out.
+
 ## Why Dhaka
 
 I'm a Bangladeshi-American who has been to Dhaka, Bangladesh, so I know it has unique movement of people with different modalities, really unexpected pathways of travel, non conformity in shapes and colors, culturally vibrant. I wanted to stress test the capabilities of the open source model with something I knew was complex.
@@ -18,15 +37,6 @@ All open source.
 - **[supervision](https://github.com/roboflow/supervision)** is Roboflow's library for the pieces around a model: drawing boxes, following a vehicle from frame to frame, smoothing, blurring.
 - **[Grounding DINO](https://huggingface.co/IDEA-Research/grounding-dino-tiny)** (IDEA Research, via Hugging Face) finds things from a written description like "a push cart". I used it to draft first labels.
 - PyTorch, OpenCV and matplotlib for the rest.
-
-## What using it was like
-
-I wanted to understand the product by using it. I found it easy to stand up and onboard, and the speed is good.
-
-- A few lines of Python ran the pretrained model on my own video.
-- Fine-tuning (continuing to train the model on my own labeled pictures) took about 10 to 15 minutes for 141 pictures, on a Mac.
-- It runs at about 30 milliseconds per picture. The model file is about 127 MB.
-- Accuracy depends on the footage, and that is most of what follows.
 
 ## The first guess
 
@@ -88,14 +98,6 @@ My answer keys started as the original pipeline's own boxes, which flatters it. 
 - Trucks are not a class, so the model guesses, and a truck often comes out as a rickshaw.
 - Carts and rickshaws in a crowd are the hardest cases.
 - People were not hand-reviewed, so they are left out of every score.
-
-## What I'd tell someone trying this
-
-- **It pays off fast when the new footage looks like what you trained on.** In Test 1, 141 labeled pictures and about 10 to 15 minutes of training on a laptop took rickshaws from 45 found out of 163 to about 130.
-- **Don't expect it to carry over to scenes it has never seen.** Collect the odd cases on purpose: other carts, night, rain, partly hidden vehicles.
-- **Give look-alikes their own name.** Without a "car" and a "truck", they get called the thing you care about.
-- **Test on footage you set aside,** and say what confidence cutoff you used.
-- **The speed is a good start.** About 30 milliseconds per picture on a laptop. I have not tested an edge device, and that is the next thing I would check.
 
 ## Rough edges I hit (rfdetr 1.11.1, supervision 0.30.6)
 
