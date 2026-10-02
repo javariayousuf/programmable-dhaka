@@ -81,12 +81,12 @@ def iou(a, b):
     return i / u if u else 0
 
 
-def draw(img_bgr, items, size=22):
+def draw(img_bgr, items, size=22, width=11):
     """items = [(category, xyxy, text)]. Rounded-ish boxes in the palette, label chip in Futura."""
     pil = Image.fromarray(cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)); dr = ImageDraw.Draw(pil); f = FONT(size)
     for cat, (x1, y1, x2, y2), text in items:
         col = rgb(HEX[cat])
-        dr.rounded_rectangle([x1, y1, x2, y2], radius=14, outline=col, width=4)
+        dr.rounded_rectangle([x1, y1, x2, y2], radius=14, outline=col, width=width)
         tb = dr.textbbox((0, 0), text, font=f); tw, th = tb[2] - tb[0] + 12, tb[3] - tb[1] + 10
         ty = max(0, y1 - th)
         dr.rectangle([x1, ty, x1 + tw, ty + th], fill=col)
@@ -94,27 +94,28 @@ def draw(img_bgr, items, size=22):
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 
-ORIG_HEX, AFTER_HEX = "#3B0086", "#db3069"   # palette colors: original pipeline = deep purple, after fine-tuning = raspberry
+# Frame colors are the two palette colors used least in the pictures, so they never compete with the boxes people see most.
+# Boxes in the two test clips: bicycle 13, cart 49, motorcycle 79, rickshaw 202, person 1034.
+ORIG_HEX, AFTER_HEX = "#EC9F05", "#e0ff4f"   # original pipeline = bicycle amber, after fine-tuning = cart yellow-green
 
 
 def panel(img_bgr, text, hex_color):
-    """Colored frame and colored label tab, so busy pictures can be told apart at a glance. White gutter outside."""
+    """Thin colored frame and colored label tab, no white margin, so busy pictures can be told apart at a glance."""
     col = rgb(hex_color)
     h, w = img_bgr.shape[:2]
-    b = max(8, w // 60)
+    b = max(4, w // 200)
     framed = cv2.copyMakeBorder(img_bgr, b, b, b, b, cv2.BORDER_CONSTANT, value=col[::-1])
     pil = Image.fromarray(cv2.cvtColor(framed, cv2.COLOR_BGR2RGB)); dr = ImageDraw.Draw(pil); f = FONT(max(16, w // 22))
     tb = dr.textbbox((0, 0), text, font=f)
     dr.rectangle([b, b, b + tb[2] + 24, b + tb[3] + 20], fill=col)
-    dr.text((b + 12, b + 8), text, font=f, fill=(255, 255, 255))
-    out = cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
-    return cv2.copyMakeBorder(out, 8, 8, 8, 8, cv2.BORDER_CONSTANT, value=(255, 255, 255))
+    dr.text((b + 12, b + 8), text, font=f, fill=(17, 17, 17))     # both colors are light, so the text is dark
+    return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 
 def render(iid, source, w):
     img = read_blurred(f"{args.images}/{files[iid]}")
     items = [(c, b, NAMES[c]) for c, b, s in source.get(iid, [])]
-    big = draw(img, items, size=34)
+    big = draw(img, items, size=34, width=11)
     return cv2.resize(big, (w, int(big.shape[0] * w / big.shape[1])), interpolation=cv2.INTER_AREA)
 
 
@@ -164,15 +165,14 @@ tiles = []
 
 def tile(iid, cat, box, label, caption, hex_color):
     img = read_blurred(f"{args.images}/{files[iid]}")
-    img = draw(img, [(cat, box, label)], size=34)
+    img = draw(img, [(cat, box, label)], size=34, width=7)
     x1, y1, x2, y2 = box; cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
     w = max(x2 - x1, (y2 - y1) * 16 / 9) * 1.5; h = w * 9 / 16
     x0 = int(min(max(cx - w / 2, 0), max(0, img.shape[1] - w))); y0 = int(min(max(cy - h / 2, 0), max(0, img.shape[0] - h)))
     crop = cv2.resize(img[y0:y0 + int(h), x0:x0 + int(w)], (640, 360), interpolation=cv2.INTER_AREA)
-    pil = Image.fromarray(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)); canvas = Image.new("RGB", (640, 420), (255, 255, 255))
+    pil = Image.fromarray(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)); canvas = Image.new("RGB", (640, 420), rgb(hex_color))
     canvas.paste(pil, (0, 0)); ImageDraw.Draw(canvas).text((12, 372), caption, font=FONT(24), fill=(17, 17, 17))
-    ImageDraw.Draw(canvas).rectangle([0, 0, 639, 419], outline=rgb(hex_color), width=10)
-    tiles.append(np.array(ImageOps.expand(canvas, border=8, fill=(255, 255, 255))))
+    tiles.append(np.array(canvas))
 
 
 def best(cands, used):
@@ -207,7 +207,9 @@ mo = [((b[2] - b[0]) * (b[3] - b[1]), iid, pb) for iid, gl in G.items() for c, b
       for pc, pb, _ in P.get(iid, []) if pc == 3 and iou(b, pb) > 0.5]
 t = best(mo, used)
 if t: tile(t[1], 3, t[2], "motorcycle", "Fine-tuned: a rickshaw called a motorcycle", AFTER_HEX)
-while len(tiles) % 3: tiles.append(np.full_like(tiles[0], 255))
-cv2.imwrite(str(OUT / f"mistakes_gallery_{args.tag}.jpg"), cv2.cvtColor(np.vstack([np.hstack(tiles[i:i + 3]) for i in range(0, len(tiles), 3)]), cv2.COLOR_RGB2BGR),
+# lay the tiles out without blank filler: 3 across, or 2 across when that fits the count better (4 tiles -> 2 x 2)
+cols = 3 if len(tiles) % 3 == 0 or len(tiles) % 2 else 2
+while len(tiles) % cols: tiles.append(np.full_like(tiles[0], 255))   # only if neither fits
+cv2.imwrite(str(OUT / f"mistakes_gallery_{args.tag}.jpg"), cv2.cvtColor(np.vstack([np.hstack(tiles[i:i + cols]) for i in range(0, len(tiles), cols)]), cv2.COLOR_RGB2BGR),
             [cv2.IMWRITE_JPEG_QUALITY, 86])
 print("pick", sorted(pick), "worse", sorted(pick2), "tiles", len(tiles))
