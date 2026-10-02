@@ -6,14 +6,15 @@
 
 *The Dhaka street clip, which the model never trained on. Heads are blurred. It gets some things right and misses others, and this page shows both.*
 
-## What using it was like
+## What was great about it
 
 I wanted to understand the product by using it. I found it easy to stand up and onboard, and the speed is good.
 
-- A few lines of Python ran the pretrained model on my own video.
-- Fine-tuning (continuing to train the model on my own labeled pictures) took about 10 to 15 minutes for 141 pictures, on a Mac.
-- It runs at about 30 milliseconds per picture. The model file is about 127 MB.
-- Accuracy depends on the footage, and that is most of what follows.
+- **It learned the word "rickshaw" from 141 pictures.** RF-DETR had no word for a rickshaw. After about 10 to 15 minutes of training on a laptop, it found about 130 of 163 rickshaws in a clip it had never seen, up from 45 with the original setup.
+- **Almost no setup.** I never told it how many kinds of things to learn. It read them from my label files.
+- **Tracking, smoothing and blurring fit in a loop of about 20 lines.** supervision supplied the tracker that follows a vehicle between frames, the smoother that steadies jumpy boxes, and the blur.
+- **On the busy Dhaka street I kept 129 of 168 first-guess boxes as drawn.** The pretrained model drafted the labels, and I corrected the rest.
+- **It all ran on one laptop,** at about 30 milliseconds per picture.
 
 ## What I'd tell someone trying this
 
