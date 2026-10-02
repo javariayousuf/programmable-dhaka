@@ -6,7 +6,7 @@
 
 *The Dhaka street clip, which the model never trained on. Heads are blurred. It gets some things right and misses others, and this page shows both.*
 
-## What was great about it
+## Reasons to try Roboflow's open source tools
 
 I wanted to understand the product by using it. I found it easy to stand up and onboard, and the speed is good.
 
