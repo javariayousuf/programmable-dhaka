@@ -1,6 +1,6 @@
 # programmable-dhaka
 
-**RF-DETR, Roboflow's open source object detection model, was trained on 80 everyday kinds of objects (people, cars, bicycles, motorcycles and so on). It doesn't know what a rickshaw is. I used RF-DETR and Roboflow's supervision library, on a Mac, to teach it, using street footage from Dhaka, Bangladesh.**
+**Teaching RF-DETR to identify rickshaws in Dhaka street footage, with Roboflow's open source tools.**
 
 ![The fine-tuned model on a Dhaka street clip it never trained on](media/hero_dhaka_street.gif)
 
