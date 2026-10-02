@@ -2,7 +2,7 @@
 
 **Teaching RF-DETR to identify rickshaws in Dhaka street footage, with Roboflow's open source tools.**
 
-<img src="media/built_with_claude_code.png" alt="Built with Claude Code, Sonnet 5.5" width="360">
+<img src="media/claude_orange.png" width="12" height="12" alt=""> Built with Claude Code, Sonnet 5.5
 
 ![The fine-tuned model on a Dhaka street clip it never trained on](media/hero_dhaka_street.gif)
 
@@ -72,7 +72,7 @@ Pictures of the mistakes are in the [details](docs/DETAILS.md).
 
 Things that cost me time, and what I would suggest (rfdetr 1.11.1, supervision 0.30.6).
 
-Summarized by Claude Code.
+<img src="media/claude_orange.png" width="12" height="12" alt=""> Summarized by Claude Code.
 
 - **Class labels are inconsistent between the model's output and the library's name list.** *Evidence:* the pretrained model returns each object as a number from 1 to 90, with gaps. The library's list of 80 names counts from zero and starts person, bicycle, car, motorcycle. So the number 1 (a person) looks up "bicycle," and the number 4 (a motorcycle) looks up "airplane." My first video labeled people "bicycle." *Suggestion:* return the names with the detections.
 - **The removed-import error points to a place that does not have the answer.** *Evidence:* importing `rfdetr.util` fails with "rfdetr.util was removed in v1.9.0. Use rfdetr.utilities instead." I checked: `rfdetr.utilities` does not contain the class names, and `rfdetr.assets.coco_classes` does. *Suggestion:* name the real location in the message.
