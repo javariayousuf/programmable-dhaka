@@ -1,6 +1,6 @@
 # programmable-dhaka
 
-**Teaching RF-DETR to identify rickshaws in Dhaka street footage, with Roboflow's open source tools.**
+**Teaching RF-DETR to identify rickshaws in Dhaka street footage, with supervision.**
 
 <img src="media/claude_orange.png" width="12" height="12" alt=""> Built with Claude Code, Sonnet 5.5
 
