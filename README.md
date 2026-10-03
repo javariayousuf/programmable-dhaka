@@ -44,11 +44,11 @@ Each test trained on two to four short clips, so the model only knows the kinds 
 
 ![Three tests](media/chart_two_tests.png)
 
-**Test 1: a street like the ones the model trained on.** I trained on the Dhaka street and e-rickshaw clips and tested on the rickshaw street clip. The original pipeline found 45 of 163 rickshaws and called 118 of them carts or bicycles. The fine-tuned model found about 130 (I trained the model twice: 131 and 135).
+**Test 1: a steady side-on street, like one of the training clips.** Trained on the Dhaka street and e-rickshaw clips, scored on the rickshaw street clip. The original pipeline found 45 of 163 rickshaws and called 118 of them carts or bicycles. The fine-tuned model found about 130 (I trained it twice: 131 and 135).
 
 ![Three frames where it gained](media/where_it_wins_rickshaw_street.jpg)
 
-**Test 2: a street unlike its training footage.** I trained on the rickshaw street and e-rickshaw clips and tested on the Dhaka street clip. Here the original pipeline scored higher than the fine-tuned model (0.81 against 0.44). Adding the night and rainy clips to training moved the fine-tuned score to 0.54. The biggest difference is carts: the original pipeline found 41 of 49 and the fine-tuned model found 1. My guess, which I have not tested: the carts in this market are metal trolleys piled with goods, and the training footage had banana carts and one umbrella cart, so this kind of cart may have been new to the model.
+**Test 2: a crowded, handheld market full of trolley carts.** Trained on the rickshaw street and e-rickshaw clips (steady side-on streets, mostly rickshaws), scored on the Dhaka street clip. The original pipeline scored higher here (0.81 against 0.44, or 0.54 with the night and rainy clips added), mostly on carts: it found 41 of 49, and the fine-tuned model found 1. My guess, which I have not tested: the market's carts are metal trolleys piled with goods, and the training clips had only banana carts and one umbrella cart.
 
 ![Frames where the original pipeline found more](media/where_it_is_worse_dhaka.jpg)
 
