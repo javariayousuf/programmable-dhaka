@@ -16,7 +16,7 @@
 - [Limits](#limits)
 - [Product feedback](#product-feedback)
 - [Questions I'd like to dig into](#questions-id-like-to-dig-into)
-- [Details, reproduce steps and tips](#details-reproduce-steps-and-tips)
+- [Scores, how to rerun it, and tips](#scores-how-to-rerun-it-and-tips)
 - [Built with open source tools and Claude Code](#built-with-open-source-tools-and-claude-code)
 
 ## Reasons to try Roboflow's open source tools
@@ -122,7 +122,7 @@ Neither message names a replacement, but the docs do: `RFDETRBase` is replaced b
 - How should near-duplicate frames be handled when labeling video? These are stills a fraction of a second apart that look almost the same. In one test, 36 pictures did about as well as 141.
 - Would RF-DETR still be fast enough at the edge, on the small computer that sits next to a camera? I measured about 30 milliseconds per picture on a laptop, and I have not measured a small device.
 
-## Details, reproduce steps and tips
+## Scores, how to rerun it, and tips
 
 - [Details and caveats](docs/DETAILS.md): scores, pictures, how the labels were corrected, limits.
 - [Reproduce it](docs/REPRODUCE.md): commands and layout.
