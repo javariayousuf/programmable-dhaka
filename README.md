@@ -21,8 +21,6 @@
 
 ## Reasons to try Roboflow's open source tools
 
-I wanted to understand the product by using it. I found it easy to stand up and onboard, and the speed is good.
-
 - **Plug and play.** All I needed to start was videos I downloaded.
 - **Intelligent modeling from RF-DETR.**
   - **Pre-labeling.** RF-DETR was already trained on everyday objects, and Grounding DINO (which finds things from a written description) handled rickshaws and carts. Together they drew a first set of labels, each one a box and a name around a vehicle. I call that first-pass setup the original pipeline. I corrected its mistakes instead of drawing every box myself: 39 of 168 boxes on the busy Dhaka street, and about two thirds on the clips that were mostly rickshaws.
