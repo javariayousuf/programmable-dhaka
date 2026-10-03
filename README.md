@@ -12,7 +12,7 @@
 
 - [Reasons to try Roboflow's open source tools](#reasons-to-try-roboflows-open-source-tools)
 - [Why Dhaka](#why-dhaka)
-- [What I found](#what-i-found)
+- [What I learned](#what-i-learned)
 - [Limits](#limits)
 - [Product feedback](#product-feedback)
 - [Questions I'd like to dig into](#questions-id-like-to-dig-into)
@@ -34,13 +34,17 @@ I wanted to understand the product by using it. I found it easy to stand up and 
 
 I'm a Bangladeshi-American who has spent time in Dhaka, Bangladesh. I know from experience that there are really unique movement patterns: people with different modalities, really unexpected pathways of travel, non conformity in shapes and colors, culturally vibrant. I wanted to stress test the capabilities of the open source model with something I knew was complex.
 
-## What I found
+## What I learned
 
 I corrected the first-pass labels by hand, with one rule: **anything that carries a passenger behind a driver is a rickshaw**, pedal or motorized. "Fine-tuned" below means RF-DETR trained further on those corrected labels. Each test scores the model on a clip it never trained on, against my corrected labels. The overall score runs from 0 to 1, and higher is better. These are small tests, so I read the numbers as a direction, not a benchmark.
 
-### With only a few short clips, fine-tuning taught rickshaws, and a different kind of street was harder
+### A handful of different examples can teach a new concept
 
-Each test trained on two to four short clips, so the model only knows the kinds of scenes in them. Test 1 was scored on a street shot like a training clip: a steady side-on view, mostly rickshaws. Test 2 was scored on a crowded, handheld market full of metal trolley carts, which the training clips did not have. I think that difference in the scene explains the gap, and it points to one thing to try: more varied training footage. I have not tested that.
+*In this case:* about five different rickshaws, shown many times, took RF-DETR from finding 45 of 163 rickshaws to about 130 on a clip it had never seen.
+
+### Fine-tuning teaches what you show it
+
+*In this case, with only a few short clips:* Each test trained on two to four short clips, so the model only knows the kinds of scenes in them. Test 1 was scored on a street shot like a training clip: a steady side-on view, mostly rickshaws. Test 2 was scored on a crowded, handheld market full of metal trolley carts, which the training clips did not have. I think that difference in the scene explains the gap, and it points to one thing to try: more varied training footage. I have not tested that.
 
 ![Three tests](media/chart_two_tests.png)
 
@@ -56,23 +60,26 @@ My answer keys (the corrected labels each test is scored against) started as the
 
 **What I take from it.** The two approaches seemed strong in opposite places. The original pipeline found most of the market's carts, but called many rickshaws carts or bicycles. The fine-tuned model named rickshaws well, but found almost none of the carts, which I think is because it had not been shown that kind. Using both looks like a natural thing to try next, along with training on footage that includes the market's carts.
 
-### The more a scene was just rickshaws, the more labels I had to correct
+### The more a scene is just one thing, the more the first guess needs correcting
 
-For the first three clips the first set of labels came from the original pipeline. I corrected far more of the original pipeline's guesses on the clips with less variety than on the varied one.
+*In this case:* For the first three clips the first set of labels came from the original pipeline. I corrected far more of the original pipeline's guesses on the clips with less variety than on the varied one.
 
 ![How much of the first guess I corrected](media/chart_corrections.png)
 
 On the busy Dhaka street I corrected 23% of the boxes. On the two clips that were mostly rickshaws I corrected 62% and 67%. My guess, which I have not tested: the first-pass tools already handle everyday objects, so a scene full of them needs little correcting, and a scene that is mostly the one thing they have no word for needs correcting nearly everywhere. (The night and rainy clips started from a model already fine-tuned on those two, so they are not a like-for-like comparison. At night 86% of the boxes needed correcting, mostly cars the model had called rickshaws.)
 
+### Near-copies of a picture may add little
+
+*In this case:* training on every 4th picture (36 in all) found 124 of 163 rickshaws, against 127 with all 141. That is one run each, and training the same setup twice gave 131 and 135, so the difference is inside the noise. More in the [details](docs/DETAILS.md).
+
 ## Limits
 
 **These are not solid findings about the model.** The samples are small, and I did not check every step as carefully as I would on a real project.
 
-- **Trucks are my choice, and I would fix it.** I never gave trucks their own label, so RF-DETR had no name for them and guessed. A truck often came out as a rickshaw. I would add a truck class and rerun.
-- **Carts and rickshaws in a crowd** were the hardest for the model.
-- **People were not hand-reviewed, also my choice,** so they are left out of every score.
+- **Trucks have no label of their own.** I never gave trucks a label, so the model had nothing to call them and often said "rickshaw." I expect a truck label and a retrain would help, but I have not tried it.
+- **People are not scored.** I corrected the labels for vehicles only, so how well the model finds people is not measured.
 
-Pictures of the mistakes are in the [details](docs/DETAILS.md).
+More pictures of the mistakes are in the [details](docs/DETAILS.md).
 
 ## Product feedback
 

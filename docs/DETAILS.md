@@ -79,7 +79,7 @@ With an earlier checkpoint (trained on the rickshaw street and e-rickshaw clips,
 - Three short clips per test, one scene each. This shows the loop, and it is not a benchmark.
 - The Dhaka street test has the original pipeline's boxes behind its answer key (see above).
 - Trucks were not labeled as a class (my choice), so the model guesses on them. A rerun with a truck class is the obvious fix.
-- Two reviewed cards (one night, one rainy) were marked "mixed" and left as the model guessed.
+- Two boxes (a motorcycle in the night clip, a car in the rainy clip) were corrected after the final model was trained, so the model saw the earlier labels for them. Both clips are training-only, so no score is affected.
 - One box in the rickshaw street test is ambiguous between bicycle and rickshaw and is not scored.
 - Head blurring uses the model's person detections, so a small face the model missed could still show.
 
