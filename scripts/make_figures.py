@@ -151,13 +151,16 @@ if len(pick) == 3:
 else:
     print("not enough real wins for a strip:", len(gain), "frames")
 # 2) the same comparison where the fine-tuned model does WORSE (carts it no longer finds). Not hidden on purpose.
-loss = sorted(files, key=lambda i: hits(O, i, 5) - hits(P, i, 5), reverse=True)
+loss = sorted((i for i in files if hits(O, i, 5) > hits(P, i, 5)), key=lambda i: hits(O, i, 5) - hits(P, i, 5), reverse=True)
 pick2 = []
 for i in loss:
     if all(abs(i - j) >= 10 for j in pick2): pick2.append(i)
     if len(pick2) == 3: break
-rows = [np.hstack([panel(render(i, O, 800), "Original pipeline", ORIG_HEX), panel(render(i, P, 800), "After fine-tuning", AFTER_HEX)]) for i in sorted(pick2)]
-cv2.imwrite(str(OUT / f"where_it_is_worse_{args.tag}.jpg"), np.vstack(rows), [cv2.IMWRITE_JPEG_QUALITY, 86])
+if len(pick2) == 3:   # only when there really are frames where the original pipeline found more carts (some test clips have no carts at all)
+    rows = [np.hstack([panel(render(i, O, 800), "Original pipeline", ORIG_HEX), panel(render(i, P, 800), "After fine-tuning", AFTER_HEX)]) for i in sorted(pick2)]
+    cv2.imwrite(str(OUT / f"where_it_is_worse_{args.tag}.jpg"), np.vstack(rows), [cv2.IMWRITE_JPEG_QUALITY, 86])
+else:
+    print("not enough frames where the original pipeline found more carts for a strip:", len(loss), "frames")
 
 # 3) gallery of real mistakes
 tiles = []
