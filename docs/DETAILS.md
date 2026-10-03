@@ -32,7 +32,7 @@ The model only draws a box when it is at least 50% sure. Lowering that finds mor
 | 0.2 | 0.59 | 34 | 15 |
 | Original pipeline | 0.81 | 18 | 41 |
 
-## A caveat that flatters the original pipeline
+## A caveat that favors the original pipeline
 
 My answer keys started as the original pipeline's own boxes, which I then corrected. So its box shapes line up with the answer key by construction, while the fine-tuned model has to match them with boxes it draws itself. The original pipeline still lost on the rickshaw street, so this does not explain that result. It probably explains part of the gap on the Dhaka street.
 

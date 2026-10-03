@@ -36,9 +36,11 @@ I'm a Bangladeshi-American who has spent time in Dhaka, Bangladesh. I know from 
 
 ## What I found
 
-I corrected the first-pass labels by hand, with one rule: **anything that carries a passenger behind a driver is a rickshaw**, pedal or motorized. "Fine-tuned" below means RF-DETR trained further on those corrected labels. Each test scores the model on a clip it never trained on, against my corrected labels. The overall score runs from 0 to 1, and higher is better. These are small tests: each model trained on only two to four short clips, so read the numbers as a direction, not a benchmark.
+I corrected the first-pass labels by hand, with one rule: **anything that carries a passenger behind a driver is a rickshaw**, pedal or motorized. "Fine-tuned" below means RF-DETR trained further on those corrected labels. Each test scores the model on a clip it never trained on, against my corrected labels. The overall score runs from 0 to 1, and higher is better. These are small tests, so I read the numbers as a direction, not a benchmark.
 
-### Fine-tuned RF-DETR learned rickshaws on a similar street, and missed the carts on a different one
+### With only a few short clips, fine-tuning taught rickshaws, and a different kind of street was harder
+
+Each test trained on two to four short clips, so the model only knows the kinds of scenes in them. Test 1 was scored on a street shot like a training clip: a steady side-on view, mostly rickshaws. Test 2 was scored on a crowded, handheld market full of metal trolley carts, which the training clips did not have. I think that difference in the scene explains the gap, and it points to one thing to try: more varied training footage. I have not tested that.
 
 ![Three tests](media/chart_two_tests.png)
 
@@ -46,13 +48,13 @@ I corrected the first-pass labels by hand, with one rule: **anything that carrie
 
 ![Three frames where it gained](media/where_it_wins_rickshaw_street.jpg)
 
-**Test 2: a street unlike its training footage.** I trained on the rickshaw street and e-rickshaw clips and tested on the Dhaka street clip. The fine-tuned model did worse than the original pipeline (0.44 against 0.81). Adding the night and rainy clips to training helped, to 0.54, but the score stayed below. The biggest gap is carts: the original pipeline found 41 of 49 and the fine-tuned model found 1. My guess: the carts in this market are metal trolleys piled with goods, and the training footage had banana carts and one umbrella cart, so the model had never seen this kind of cart. I have not tested that.
+**Test 2: a street unlike its training footage.** I trained on the rickshaw street and e-rickshaw clips and tested on the Dhaka street clip. Here the original pipeline scored higher than the fine-tuned model (0.81 against 0.44). Adding the night and rainy clips to training moved the fine-tuned score to 0.54. The biggest difference is carts: the original pipeline found 41 of 49 and the fine-tuned model found 1. My guess, which I have not tested: the carts in this market are metal trolleys piled with goods, and the training footage had banana carts and one umbrella cart, so this kind of cart may have been new to the model.
 
-![Where it did worse](media/where_it_is_worse_dhaka.jpg)
+![Frames where the original pipeline found more](media/where_it_is_worse_dhaka.jpg)
 
-My answer keys (the corrected labels each test is scored against) started as the original pipeline's own boxes, which flatters the original pipeline. The original pipeline still lost on the rickshaw street, so that does not explain Test 1, but that caveat probably explains some of the gap in Test 2. More in [docs/DETAILS.md](docs/DETAILS.md).
+My answer keys (the corrected labels each test is scored against) started as the original pipeline's own boxes, which gives the original pipeline an advantage. It also scored lower on the rickshaw street, so that does not explain Test 1, but it probably explains some of the gap in Test 2. More in [docs/DETAILS.md](docs/DETAILS.md).
 
-**The takeaway.** The two approaches fail in opposite ways. The original pipeline found most of the market's carts, but called rickshaws carts and bicycles. The fine-tuned model named rickshaws well, but missed the carts because it had never been shown that kind. Each is strong where the other is weak, so the next step is to use both, and to train on footage that includes the market's carts.
+**What I take from it.** The two approaches seemed strong in opposite places. The original pipeline found most of the market's carts, but called many rickshaws carts or bicycles. The fine-tuned model named rickshaws well, but found almost none of the carts, which I think is because it had not been shown that kind. Using both looks like a natural thing to try next, along with training on footage that includes the market's carts.
 
 ### The more a scene was just rickshaws, the more labels I had to correct
 
@@ -65,18 +67,18 @@ On the busy Dhaka street I corrected 23% of the boxes. On the two clips that wer
 ## Limits
 
 - **Trucks are my choice, and I would fix it.** I never gave trucks their own label, so RF-DETR had no name for them and guessed. A truck often came out as a rickshaw. I would add a truck class and rerun.
-- **Carts and rickshaws in a crowd** are the hardest cases.
+- **Carts and rickshaws in a crowd** were the hardest for the model.
 - **People were not hand-reviewed, also my choice,** so they are left out of every score.
 
 Pictures of the mistakes are in the [details](docs/DETAILS.md).
 
 ## Product feedback
 
-Tested with rfdetr 1.11.1 and supervision 0.30.6, on Python 3.14 and macOS (Apple silicon). Each item shows what I ran, what came back, and what I would change.
+Tested with rfdetr 1.11.1 and supervision 0.30.6, on Python 3.14 and macOS (Apple silicon). Each item shows what I ran, what came back, and an idea. I may be missing a better way to do some of these, so please read them as questions as much as suggestions.
 
 <img src="media/claude_orange.png" width="12" height="12" alt=""> Summarized by Claude Code.
 
-**1. `model.class_names` does not match `class_id`.**
+**1. I found `model.class_names` and `class_id` hard to line up.**
 
 ```python
 d = model.predict(image, threshold=0.5)          # model = RFDETRBase()
@@ -85,26 +87,26 @@ d.class_id                                       # [1, 4, 1, 1, ...]
 d.data["class_name"]                             # ['person', 'motorcycle', 'person', 'person', ...]
 ```
 
-The ids are COCO's (1 to 90, with gaps) and the list holds 80 names counted from zero, so looking a name up by id lands on the wrong object. I did that, and my first video labeled people "bicycle." The right names were in `d.data["class_name"]`, which I found later. *Suggestion:* make `class_names` a dictionary keyed by class id, or say in its docstring to use `detections.data["class_name"]`.
+The ids are COCO's (1 to 90, with gaps) and the list holds 80 names counted from zero, so a name I looked up by id landed on a different object, and my first video labeled people "bicycle." The right names were in `d.data["class_name"]`, which I only found later. *Idea:* `class_names` as a dictionary keyed by class id, or a line in its docstring pointing to `detections.data["class_name"]`.
 
-**2. The removed-import error points to a place that does not have the answer.**
+**2. A question about the removed-import message.**
 
 ```python
 import rfdetr.util   # ImportError: rfdetr.util was removed in v1.9.0. Use rfdetr.utilities instead.
 ```
 
-`rfdetr.utilities` does not contain the class names (`hasattr(rfdetr.utilities, "COCO_CLASS_NAMES")` is `False`). They are in `rfdetr.assets.coco_classes`. *Suggestion:* name the real location in the message.
+The message sent me to `rfdetr.utilities`, but the class names are not there (`hasattr(rfdetr.utilities, "COCO_CLASS_NAMES")` is `False`). They are in `rfdetr.assets.coco_classes`, where I eventually found them. *Idea:* the message could point there.
 
-**3. The deprecation warnings leave out the replacement that the docs give.**
+**3. I looked for the replacement in the deprecation warnings.**
 
 ```python
 RFDETRBase()      # FutureWarning: The `RFDETRBase` was deprecated since v1.7.0. It will be removed in v2.0.0.
 sv.ByteTrack()    # FutureWarning: The `ByteTrack` was deprecated since v0.28.0. It will be removed in v0.31.0.
 ```
 
-Neither message says what to use instead. The docs do: `RFDETRBase` is replaced by `RFDETRSmall` (or Nano, Medium, Large) in the [RF-DETR migration guide](https://rfdetr.roboflow.com/latest/getting-started/migration/), and `sv.ByteTrack` by `ByteTrackTracker` from the `trackers` package, with `update_with_detections()` renamed `update()`, on [supervision's deprecated page](https://supervision.roboflow.com/latest/deprecated/). *Suggestion:* put the replacement in the warning text.
+Neither message names a replacement, but the docs do: `RFDETRBase` is replaced by `RFDETRSmall` (or Nano, Medium, Large) in the [RF-DETR migration guide](https://rfdetr.roboflow.com/latest/getting-started/migration/), and `sv.ByteTrack` by `ByteTrackTracker` from the `trackers` package, with `update_with_detections()` renamed `update()`, on [supervision's deprecated page](https://supervision.roboflow.com/latest/deprecated/). *Idea:* adding the replacement to the warning text would save a trip to the docs.
 
-**4. The first training run needs one extra install and one Mac-only rule.** `model.train(...)` stops with an import error until `rfdetr[train]` is installed, and that error names the command, which is clear. On macOS the data loader then crashes with Python's generic multiprocessing error unless the call sits inside `if __name__ == "__main__":`. *Suggestion:* put both in the quickstart.
+**4. Setting up training took me two small steps.** `model.train(...)` asked me to install `rfdetr[train]`, and the error named the command, which was clear. On macOS the data loader then stopped with Python's generic multiprocessing error until I wrapped the call in `if __name__ == "__main__":`. *Idea:* a line about each in the quickstart might help the next person.
 
 ## Questions I'd like to dig into
 
