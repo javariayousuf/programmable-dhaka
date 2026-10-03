@@ -66,6 +66,8 @@ On the busy Dhaka street I corrected 23% of the boxes. On the two clips that wer
 
 ## Limits
 
+**These are not solid findings about the model.** The samples are small, and I did not check every step as carefully as I would on a real project.
+
 - **Trucks are my choice, and I would fix it.** I never gave trucks their own label, so RF-DETR had no name for them and guessed. A truck often came out as a rickshaw. I would add a truck class and rerun.
 - **Carts and rickshaws in a crowd** were the hardest for the model.
 - **People were not hand-reviewed, also my choice,** so they are left out of every score.
