@@ -6,7 +6,9 @@
 
 ![The fine-tuned model on a Dhaka street clip it never trained on](media/hero_dhaka_street.gif)
 
-*The Dhaka street clip, which RF-DETR never trained on. Blue is a person, pink a rickshaw, purple a motorcycle, amber a bicycle, yellow-green a cart.*
+*The Dhaka street clip, which RF-DETR never trained on.*
+
+<img src="media/dot_person.png" width="12" height="12" alt="blue dot"> person&nbsp;&nbsp;·&nbsp;&nbsp;<img src="media/dot_rickshaw.png" width="12" height="12" alt="pink dot"> rickshaw&nbsp;&nbsp;·&nbsp;&nbsp;<img src="media/dot_motorcycle.png" width="12" height="12" alt="purple dot"> motorcycle&nbsp;&nbsp;·&nbsp;&nbsp;<img src="media/dot_bicycle.png" width="12" height="12" alt="amber dot"> bicycle&nbsp;&nbsp;·&nbsp;&nbsp;<img src="media/dot_cart.png" width="12" height="12" alt="yellow-green dot"> cart
 
 ## Contents
 
