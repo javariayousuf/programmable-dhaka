@@ -21,7 +21,7 @@
 
 ## Reasons to try Roboflow's open source tools
 
-- **Plug and play.** All I needed to start was videos I downloaded.
+- **Plug and play.** All I needed to start was my laptop and free videos I downloaded.
 - **Intelligent modeling from RF-DETR.**
   - **Pre-labeling.** RF-DETR was already trained on everyday objects, and Grounding DINO (which finds things from a written description) handled rickshaws and carts. Together they drew a first set of labels, each one a box and a name around a vehicle. I call that first-pass setup the original pipeline. I corrected its mistakes instead of drawing every box myself: 39 of 168 boxes on the busy Dhaka street, and about two thirds on the clips that were mostly rickshaws.
   - **An unknown concept, from a handful of examples.** RF-DETR knows 80 everyday kinds of objects, but it had no word for a rickshaw. I trained it on 141 pictures, but they show only about five different rickshaws, many of them near-copies of each other. About 10 to 15 minutes later, on a laptop, it found about 130 of 163 rickshaws in a clip it had never seen. The original pipeline found 45.
