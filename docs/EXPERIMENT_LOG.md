@@ -35,7 +35,7 @@ The intersection clip adds 319 truck and bus boxes and 271 cars, but only 22 ric
 
 Clips with few rickshaws do not teach the model about rickshaws, and cleaning up cars and trucks only trims false alarms. A crowded rickshaw clip then showed a second problem: my review page only shows vehicles the model already found, so rickshaws it missed never get a box. In a packed scene that left dozens of unlabeled rickshaws in the background, and training on those would teach the model to ignore them.
 
-The new plan is to add clearer footage, with rickshaws large in the frame and fewer of them, and still photos, which are quick to label completely. The crowded clip stays as a hard test for later.
+The new plan is to add clearer footage, with rickshaws large in the frame and fewer of them, and still photos, which are quick to label completely. I removed the crowded clip from the project rather than train or test on labels I knew were incomplete.
 
 ## Still open
 
