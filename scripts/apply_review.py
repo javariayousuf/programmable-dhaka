@@ -2,12 +2,12 @@ import json, shutil, sys
 from pathlib import Path
 
 # Writes the answers from review_cards.py back into the label file. Makes a backup first.
-# usage: python apply_review.py <dataset_dir>
+# usage: python apply_review.py <dataset_dir> [review_dir]
 D = Path(sys.argv[1])
-REV = D / "review"
-IDS = {"person": 1, "bicycle": 2, "motorcycle": 3, "rickshaw": 4, "cart": 5, "car": 6}
+REV = D / (sys.argv[2] if len(sys.argv) > 2 else "review")   # second argument: review_boxes, after review_cards.py --mixed
+IDS = {"person": 1, "bicycle": 2, "motorcycle": 3, "rickshaw": 4, "cart": 5, "car": 6, "truck": 7}
 src = D / "annotations.coco.json"
-shutil.copy(src, D / "annotations.coco.before_card_review.json")
+shutil.copy(src, D / f"annotations.coco.before_{REV.name}.json")
 coco = json.load(open(src))
 tracks = {t["id"]: t for t in json.load(open(REV / "tracks.json"))}
 answers = {int(k): v for k, v in json.load(open(REV / "answers.json")).items()}

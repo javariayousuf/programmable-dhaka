@@ -1,0 +1,104 @@
+{
+  "rain": {
+    "images": 106,
+    "finetuned": {
+      "bicycle": {
+        "tp": 4,
+        "fp": 5,
+        "fn": 91,
+        "precision": 0.444,
+        "recall": 0.042,
+        "f1": 0.077,
+        "gt": 95
+      },
+      "motorcycle": {
+        "tp": 16,
+        "fp": 58,
+        "fn": 2,
+        "precision": 0.216,
+        "recall": 0.889,
+        "f1": 0.348,
+        "gt": 18
+      },
+      "rickshaw": {
+        "tp": 63,
+        "fp": 60,
+        "fn": 22,
+        "precision": 0.512,
+        "recall": 0.741,
+        "f1": 0.606,
+        "gt": 85
+      },
+      "cart": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 0
+      },
+      "truck": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 34,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 34
+      },
+      "ALL VEHICLES": {
+        "tp": 83,
+        "fp": 123,
+        "fn": 115,
+        "precision": 0.403,
+        "recall": 0.419,
+        "f1": 0.411,
+        "gt": 198
+      }
+    },
+    "finetuned_confusion": {
+      "bicycle": {
+        "bicycle": 4,
+        "motorcycle": 35,
+        "rickshaw": 11,
+        "cart": 0,
+        "truck": 0,
+        "missed": 45
+      },
+      "motorcycle": {
+        "bicycle": 0,
+        "motorcycle": 16,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 2
+      },
+      "rickshaw": {
+        "bicycle": 1,
+        "motorcycle": 2,
+        "rickshaw": 63,
+        "cart": 0,
+        "truck": 0,
+        "missed": 19
+      },
+      "cart": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 0
+      },
+      "truck": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 34
+      }
+    },
+    "ms_per_image_median": 29.7
+  }
+}

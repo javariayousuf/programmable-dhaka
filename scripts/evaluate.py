@@ -1,9 +1,9 @@
 from pathlib import Path
-import json, time, sys
+import json, os, time, sys
 import numpy as np, cv2
 from rfdetr import RFDETRSmall
 
-# Scores vehicle classes only (bicycle, motorcycle, rickshaw, cart) against the hand-corrected labels.
+# Scores vehicle classes only (bicycle, motorcycle, rickshaw, cart, truck) against the hand-corrected labels.
 # Person is left out on purpose: the person labels were never hand-corrected, they are the pretrained
 # detector's own output, so scoring them would only measure agreement with itself.
 ROOT = str(Path(__file__).resolve().parent.parent)  # repo root
@@ -12,8 +12,8 @@ holdout = sys.argv[1] if len(sys.argv) > 1 else "clip1"
 WEIGHTS = sys.argv[2] if len(sys.argv) > 2 else f"{ROOT}/runs/small/checkpoint_best_total.pth"
 OUT_JSON = sys.argv[3] if len(sys.argv) > 3 else f"{ROOT}/eval/results_{holdout}_holdout.json"
 CLIPS = {holdout: {"gt": f"{ROOT}/labels/{holdout}", "baseline": f"{ROOT}/labels/{holdout}/original_pipeline.coco.json"}}
-NAMES = {2: "bicycle", 3: "motorcycle", 4: "rickshaw", 5: "cart"}  # COCO category id -> class
-CONF = 0.5  # same threshold the video pipeline uses
+NAMES = {2: "bicycle", 3: "motorcycle", 4: "rickshaw", 5: "cart", 7: "truck"}  # COCO category id -> class. Truck has its own row and is left out of ALL VEHICLES, so earlier results stay comparable
+CONF = float(os.environ.get("CONF", "0.5"))  # 0.5 is what the video pipeline uses; set CONF=0.3 to see how the cutoff changes the score
 IOU = 0.5
 
 
@@ -51,7 +51,8 @@ def score(gt_by_img, pred_by_img):
         R = tp / (tp + fn) if tp + fn else 0.0
         out[name] = {"tp": tp, "fp": fp, "fn": fn, "precision": round(P, 3), "recall": round(R, 3),
                      "f1": round(2 * P * R / (P + R), 3) if P + R else 0.0, "gt": tp + fn}
-    tp = sum(v["tp"] for v in out.values()); fp = sum(v["fp"] for v in out.values()); fn = sum(v["fn"] for v in out.values())
+    core = {k: v for k, v in out.items() if k != "truck"}
+    tp = sum(v["tp"] for v in core.values()); fp = sum(v["fp"] for v in core.values()); fn = sum(v["fn"] for v in core.values())
     P = tp / (tp + fp) if tp + fp else 0.0; R = tp / (tp + fn) if tp + fn else 0.0
     out["ALL VEHICLES"] = {"tp": tp, "fp": fp, "fn": fn, "precision": round(P, 3), "recall": round(R, 3),
                            "f1": round(2 * P * R / (P + R), 3) if P + R else 0.0, "gt": tp + fn}
@@ -104,21 +105,22 @@ def main():
             times.append(time.time() - t)
             preds[im["id"]] = [{"category_id": int(c) + 1, "bbox": [x1, y1, x2 - x1, y2 - y1], "score": float(s)}
                                for (x1, y1, x2, y2), c, s in zip(d.xyxy, d.class_id, d.confidence) if int(c) + 1 in NAMES]
-        base = load_preds(cfg["baseline"])
         results[clip] = {
             "images": len(coco["images"]),
             "finetuned": score(gt, preds), "finetuned_confusion": confusion(gt, preds),
-            "baseline": score(gt, base), "baseline_confusion": confusion(gt, base),
             "ms_per_image_median": round(1000 * float(np.median(times[3:])), 1),  # skip warm-up calls
         }
+        if os.path.exists(cfg["baseline"]):   # only clip1 and clip3 have the original pipeline's boxes (night and rain started from a fine-tuned model)
+            base = load_preds(cfg["baseline"])
+            results[clip].update({"baseline": score(gt, base), "baseline_confusion": confusion(gt, base)})
     json.dump(results, open(OUT_JSON, "w"), indent=2)
     for clip, r in results.items():
         print(f"\n=== {clip} ({r['images']} images), median {r['ms_per_image_median']} ms/image")
-        for tag in ("baseline", "finetuned"):
+        for tag in [t for t in ("baseline", "finetuned") if t in r]:
             print(f"  {tag}:")
             for name, v in r[tag].items():
                 print(f"    {name:13s} P {v['precision']:.2f}  R {v['recall']:.2f}  F1 {v['f1']:.2f}   (true boxes {v['gt']}, tp {v['tp']}, fp {v['fp']}, fn {v['fn']})")
-        for tag in ("baseline_confusion", "finetuned_confusion"):
+        for tag in [t for t in ("baseline_confusion", "finetuned_confusion") if t in r]:
             print(f"  {tag} (rows = truth, columns = what it was called):")
             for row, cols in r[tag].items():
                 print(f"    {row:11s} " + "  ".join(f"{k}={v}" for k, v in cols.items()))

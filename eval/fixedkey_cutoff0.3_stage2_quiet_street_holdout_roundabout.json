@@ -1,0 +1,104 @@
+{
+  "roundabout": {
+    "images": 97,
+    "finetuned": {
+      "bicycle": {
+        "tp": 0,
+        "fp": 4,
+        "fn": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 2
+      },
+      "motorcycle": {
+        "tp": 99,
+        "fp": 34,
+        "fn": 15,
+        "precision": 0.744,
+        "recall": 0.868,
+        "f1": 0.802,
+        "gt": 114
+      },
+      "rickshaw": {
+        "tp": 211,
+        "fp": 76,
+        "fn": 117,
+        "precision": 0.735,
+        "recall": 0.643,
+        "f1": 0.686,
+        "gt": 328
+      },
+      "cart": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 1
+      },
+      "truck": {
+        "tp": 88,
+        "fp": 9,
+        "fn": 10,
+        "precision": 0.907,
+        "recall": 0.898,
+        "f1": 0.903,
+        "gt": 98
+      },
+      "ALL VEHICLES": {
+        "tp": 310,
+        "fp": 114,
+        "fn": 135,
+        "precision": 0.731,
+        "recall": 0.697,
+        "f1": 0.713,
+        "gt": 445
+      }
+    },
+    "finetuned_confusion": {
+      "bicycle": {
+        "bicycle": 0,
+        "motorcycle": 1,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 1
+      },
+      "motorcycle": {
+        "bicycle": 0,
+        "motorcycle": 99,
+        "rickshaw": 1,
+        "cart": 0,
+        "truck": 0,
+        "missed": 14
+      },
+      "rickshaw": {
+        "bicycle": 0,
+        "motorcycle": 21,
+        "rickshaw": 206,
+        "cart": 0,
+        "truck": 3,
+        "missed": 98
+      },
+      "cart": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 1
+      },
+      "truck": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 5,
+        "cart": 0,
+        "truck": 86,
+        "missed": 7
+      }
+    },
+    "ms_per_image_median": 30.4
+  }
+}

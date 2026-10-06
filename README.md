@@ -38,6 +38,21 @@ I'm a Bangladeshi-American who has spent time in Dhaka, Bangladesh. I know from 
 
 I corrected the first-pass labels by hand, with one rule: **anything that carries a passenger behind a driver is a rickshaw**, pedal or motorized. "Fine-tuned" means RF-DETR trained further on those corrected labels. Each test scores the model on a clip it never trained on, against my corrected labels. Scores run from 0 to 1, and higher is better. The tests are small, so I read the numbers as a direction, not a benchmark.
 
+**Update, October 2026.** After the tests below, I found that some of my answer keys were incomplete. My review page only showed vehicles the model had already found, so a rickshaw it missed had no box. Checking one new test clip box by box doubled its rickshaw count, from 165 to 328. The Test 1 and Test 2 numbers below were scored against keys made the same way and I have not rechecked them yet, so they may move. What I found next, including the one change that clearly helped, is in the [experiment log](docs/EXPERIMENT_LOG.md): adding one clear, fully labeled rickshaw clip took rickshaw F1 on a new scene from 0.48 to 0.64.
+
+The clips are numbered below and in the log. Folder names did not change.
+
+| # | Folder | What is special |
+|---|---|---|
+| 1 | `clip1` | Crowded market, handheld, trolley carts (called "Dhaka street" below) |
+| 2 | `clip2` | E-rickshaws on a steady street, filmed in India |
+| 3 | `clip3` | Rickshaw street: steady, side-on, mostly rickshaws |
+| 4 | `night` | Night traffic |
+| 5 | `rain` | A rainy handheld walk |
+| 6 | `intersection` | High-angle intersection with big buses |
+| 7 | `quiet_street` | Steady low view, a few large rickshaws, 143 labeled |
+| 8 | `roundabout` | Test only, never trained on: decorated pedal rickshaws, 328 labeled |
+
 ### A few different examples can teach something new
 
 *In this case:* about five different rickshaws, shown many times, took RF-DETR from finding 45 of 163 rickshaws to about 130, on a clip it had never seen.
@@ -76,7 +91,7 @@ On the busy Dhaka street I corrected 23% of the boxes. On the two clips that wer
 
 **These are not solid findings about the model.** The samples are small, and I did not check every step as carefully as I would on a real project.
 
-- **Trucks have no label of their own.** I never gave trucks a label, so the model had nothing to call them and often said "rickshaw." I expect a truck label and a retrain would help, but I have not tried it.
+- **Trucks.** Round 1 had no truck label, so the model sometimes called trucks "rickshaw." In round 2 I added a truck class (buses included). It learned daytime trucks and not night ones, and it did not clearly help rickshaws. Details are in the [experiment log](docs/EXPERIMENT_LOG.md).
 - **People are not scored.** I only corrected labels for vehicles, so how well the model finds people is not measured.
 
 More pictures of the mistakes are in the [details](docs/DETAILS.md).
@@ -129,6 +144,7 @@ Neither message names a replacement, but the docs do: `RFDETRBase` is replaced b
 - [Details and caveats](docs/DETAILS.md): scores, pictures, how the labels were corrected, limits.
 - [Reproduce it](docs/REPRODUCE.md): commands and layout.
 - [Tips and learnings](docs/LEARNINGS.md): what I'd tell someone trying this.
+- [Experiment log](docs/EXPERIMENT_LOG.md): round 2, what I tried next and what changed my mind.
 
 ## Built with open source tools and Claude Code
 
@@ -143,5 +159,7 @@ All footage is from [Pexels](https://www.pexels.com) under the Pexels License. E
 - Rickshaw street ("Colorful Rickshaws on Bustling Street") by Somogro Bangladesh: [video](https://www.pexels.com/video/colorful-rickshaws-on-bustling-street-36526831/), [profile](https://www.pexels.com/@somogrobangladesh/)
 - Night traffic ("Vibrant City Night Traffic Scene") by Jubayer Hossain, tagged Dhaka and Chittagong: [video](https://www.pexels.com/video/vibrant-city-night-traffic-scene-35041521/), [profile](https://www.pexels.com/@jubayer-wh/)
 - Rainy walk ("Rainy Day Street Scene in Dhaka, Bangladesh") by Latiful Jawad, labels only: [video](https://www.pexels.com/video/rainy-day-street-scene-in-dhaka-bangladesh-29662763/), [profile](https://www.pexels.com/@latiful-jawad-431220084/)
+- Intersection clip by [@jubayer-wh](https://www.pexels.com/@jubayer-wh/), labels only
+- Quiet street and roundabout clips by [@kowsar-ahmed-2158536533](https://www.pexels.com/@kowsar-ahmed-2158536533/), labels only
 
 Created by J. Yousuf.

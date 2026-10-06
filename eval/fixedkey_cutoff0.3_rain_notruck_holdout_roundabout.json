@@ -1,0 +1,104 @@
+{
+  "roundabout": {
+    "images": 97,
+    "finetuned": {
+      "bicycle": {
+        "tp": 0,
+        "fp": 5,
+        "fn": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 2
+      },
+      "motorcycle": {
+        "tp": 64,
+        "fp": 15,
+        "fn": 50,
+        "precision": 0.81,
+        "recall": 0.561,
+        "f1": 0.663,
+        "gt": 114
+      },
+      "rickshaw": {
+        "tp": 218,
+        "fp": 219,
+        "fn": 110,
+        "precision": 0.499,
+        "recall": 0.665,
+        "f1": 0.57,
+        "gt": 328
+      },
+      "cart": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 1
+      },
+      "truck": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 98,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 98
+      },
+      "ALL VEHICLES": {
+        "tp": 282,
+        "fp": 240,
+        "fn": 163,
+        "precision": 0.54,
+        "recall": 0.634,
+        "f1": 0.583,
+        "gt": 445
+      }
+    },
+    "finetuned_confusion": {
+      "bicycle": {
+        "bicycle": 0,
+        "motorcycle": 1,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 1
+      },
+      "motorcycle": {
+        "bicycle": 0,
+        "motorcycle": 52,
+        "rickshaw": 39,
+        "cart": 0,
+        "truck": 0,
+        "missed": 23
+      },
+      "rickshaw": {
+        "bicycle": 1,
+        "motorcycle": 2,
+        "rickshaw": 219,
+        "cart": 0,
+        "truck": 0,
+        "missed": 106
+      },
+      "cart": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 1
+      },
+      "truck": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 98
+      }
+    },
+    "ms_per_image_median": 56.5
+  }
+}

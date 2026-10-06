@@ -1,0 +1,104 @@
+{
+  "roundabout": {
+    "images": 97,
+    "finetuned": {
+      "bicycle": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 2
+      },
+      "motorcycle": {
+        "tp": 35,
+        "fp": 1,
+        "fn": 79,
+        "precision": 0.972,
+        "recall": 0.307,
+        "f1": 0.467,
+        "gt": 114
+      },
+      "rickshaw": {
+        "tp": 108,
+        "fp": 17,
+        "fn": 220,
+        "precision": 0.864,
+        "recall": 0.329,
+        "f1": 0.477,
+        "gt": 328
+      },
+      "cart": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 1
+      },
+      "truck": {
+        "tp": 65,
+        "fp": 0,
+        "fn": 33,
+        "precision": 1.0,
+        "recall": 0.663,
+        "f1": 0.798,
+        "gt": 98
+      },
+      "ALL VEHICLES": {
+        "tp": 143,
+        "fp": 19,
+        "fn": 302,
+        "precision": 0.883,
+        "recall": 0.321,
+        "f1": 0.471,
+        "gt": 445
+      }
+    },
+    "finetuned_confusion": {
+      "bicycle": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 2
+      },
+      "motorcycle": {
+        "bicycle": 1,
+        "motorcycle": 35,
+        "rickshaw": 2,
+        "cart": 0,
+        "truck": 0,
+        "missed": 76
+      },
+      "rickshaw": {
+        "bicycle": 0,
+        "motorcycle": 1,
+        "rickshaw": 109,
+        "cart": 0,
+        "truck": 0,
+        "missed": 218
+      },
+      "cart": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 1
+      },
+      "truck": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 65,
+        "missed": 33
+      }
+    },
+    "ms_per_image_median": 53.0
+  }
+}

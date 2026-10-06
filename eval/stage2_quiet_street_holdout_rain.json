@@ -1,0 +1,104 @@
+{
+  "rain": {
+    "images": 106,
+    "finetuned": {
+      "bicycle": {
+        "tp": 21,
+        "fp": 20,
+        "fn": 74,
+        "precision": 0.512,
+        "recall": 0.221,
+        "f1": 0.309,
+        "gt": 95
+      },
+      "motorcycle": {
+        "tp": 16,
+        "fp": 35,
+        "fn": 2,
+        "precision": 0.314,
+        "recall": 0.889,
+        "f1": 0.464,
+        "gt": 18
+      },
+      "rickshaw": {
+        "tp": 60,
+        "fp": 41,
+        "fn": 25,
+        "precision": 0.594,
+        "recall": 0.706,
+        "f1": 0.645,
+        "gt": 85
+      },
+      "cart": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 0
+      },
+      "truck": {
+        "tp": 9,
+        "fp": 7,
+        "fn": 25,
+        "precision": 0.562,
+        "recall": 0.265,
+        "f1": 0.36,
+        "gt": 34
+      },
+      "ALL VEHICLES": {
+        "tp": 97,
+        "fp": 96,
+        "fn": 101,
+        "precision": 0.503,
+        "recall": 0.49,
+        "f1": 0.496,
+        "gt": 198
+      }
+    },
+    "finetuned_confusion": {
+      "bicycle": {
+        "bicycle": 20,
+        "motorcycle": 19,
+        "rickshaw": 5,
+        "cart": 0,
+        "truck": 0,
+        "missed": 51
+      },
+      "motorcycle": {
+        "bicycle": 0,
+        "motorcycle": 16,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 2
+      },
+      "rickshaw": {
+        "bicycle": 4,
+        "motorcycle": 0,
+        "rickshaw": 60,
+        "cart": 0,
+        "truck": 5,
+        "missed": 16
+      },
+      "cart": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 0
+      },
+      "truck": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 9,
+        "missed": 25
+      }
+    },
+    "ms_per_image_median": 35.4
+  }
+}

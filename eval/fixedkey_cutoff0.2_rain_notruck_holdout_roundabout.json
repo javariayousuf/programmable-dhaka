@@ -1,0 +1,104 @@
+{
+  "roundabout": {
+    "images": 97,
+    "finetuned": {
+      "bicycle": {
+        "tp": 0,
+        "fp": 20,
+        "fn": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 2
+      },
+      "motorcycle": {
+        "tp": 83,
+        "fp": 38,
+        "fn": 31,
+        "precision": 0.686,
+        "recall": 0.728,
+        "f1": 0.706,
+        "gt": 114
+      },
+      "rickshaw": {
+        "tp": 254,
+        "fp": 342,
+        "fn": 74,
+        "precision": 0.426,
+        "recall": 0.774,
+        "f1": 0.55,
+        "gt": 328
+      },
+      "cart": {
+        "tp": 0,
+        "fp": 7,
+        "fn": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 1
+      },
+      "truck": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 98,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 98
+      },
+      "ALL VEHICLES": {
+        "tp": 337,
+        "fp": 407,
+        "fn": 108,
+        "precision": 0.453,
+        "recall": 0.757,
+        "f1": 0.567,
+        "gt": 445
+      }
+    },
+    "finetuned_confusion": {
+      "bicycle": {
+        "bicycle": 0,
+        "motorcycle": 1,
+        "rickshaw": 1,
+        "cart": 0,
+        "truck": 0,
+        "missed": 0
+      },
+      "motorcycle": {
+        "bicycle": 0,
+        "motorcycle": 58,
+        "rickshaw": 44,
+        "cart": 0,
+        "truck": 0,
+        "missed": 12
+      },
+      "rickshaw": {
+        "bicycle": 1,
+        "motorcycle": 2,
+        "rickshaw": 254,
+        "cart": 0,
+        "truck": 0,
+        "missed": 71
+      },
+      "cart": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 1
+      },
+      "truck": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 98
+      }
+    },
+    "ms_per_image_median": 54.7
+  }
+}

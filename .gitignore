@@ -8,3 +8,8 @@ labels/*/images
 exp_data/
 .DS_Store
 train_dataset*/
+labels/*/review/
+labels/*/review_boxes/
+labels/*/review_added/
+labels/*/annotations.coco.before_*.json
+labels/*/annotations.coco.after_*.json

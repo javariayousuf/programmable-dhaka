@@ -1,0 +1,104 @@
+{
+  "roundabout": {
+    "images": 97,
+    "finetuned": {
+      "bicycle": {
+        "tp": 0,
+        "fp": 23,
+        "fn": 2,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 2
+      },
+      "motorcycle": {
+        "tp": 102,
+        "fp": 129,
+        "fn": 12,
+        "precision": 0.442,
+        "recall": 0.895,
+        "f1": 0.591,
+        "gt": 114
+      },
+      "rickshaw": {
+        "tp": 202,
+        "fp": 224,
+        "fn": 126,
+        "precision": 0.474,
+        "recall": 0.616,
+        "f1": 0.536,
+        "gt": 328
+      },
+      "cart": {
+        "tp": 0,
+        "fp": 15,
+        "fn": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 1
+      },
+      "truck": {
+        "tp": 93,
+        "fp": 54,
+        "fn": 5,
+        "precision": 0.633,
+        "recall": 0.949,
+        "f1": 0.759,
+        "gt": 98
+      },
+      "ALL VEHICLES": {
+        "tp": 304,
+        "fp": 391,
+        "fn": 141,
+        "precision": 0.437,
+        "recall": 0.683,
+        "f1": 0.533,
+        "gt": 445
+      }
+    },
+    "finetuned_confusion": {
+      "bicycle": {
+        "bicycle": 0,
+        "motorcycle": 1,
+        "rickshaw": 1,
+        "cart": 0,
+        "truck": 0,
+        "missed": 0
+      },
+      "motorcycle": {
+        "bicycle": 1,
+        "motorcycle": 96,
+        "rickshaw": 5,
+        "cart": 0,
+        "truck": 0,
+        "missed": 12
+      },
+      "rickshaw": {
+        "bicycle": 0,
+        "motorcycle": 45,
+        "rickshaw": 178,
+        "cart": 1,
+        "truck": 11,
+        "missed": 93
+      },
+      "cart": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 1
+      },
+      "truck": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 9,
+        "cart": 0,
+        "truck": 89,
+        "missed": 0
+      }
+    },
+    "ms_per_image_median": 48.4
+  }
+}
