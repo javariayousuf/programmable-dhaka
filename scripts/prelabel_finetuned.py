@@ -10,6 +10,7 @@ from rfdetr import RFDETRSmall
 # ranges: "5-12,35-42" pulls only those stretches (still numbers jump by 10 between stretches so the review tool never links across them)
 ROOT = Path(__file__).resolve().parent.parent
 WEIGHTS = os.environ.get("WEIGHTS", str(ROOT / "runs/small/checkpoint_best_total.pth"))
+THRESHOLD = float(os.environ.get("THRESHOLD", "0.4"))   # lower (0.2) on crowded clips, so the review page is offered more candidates
 CLASSES = ["person", "bicycle", "motorcycle", "rickshaw", "cart", "car"]  # COCO category id = index + 1
 
 src, out, gap = sys.argv[1], Path(sys.argv[2]), float(sys.argv[3])
@@ -31,7 +32,7 @@ for start, end in ranges:
         name = f"frame_{n:04d}.jpg"
         cv2.imwrite(str(out / "images" / name), frame, [cv2.IMWRITE_JPEG_QUALITY, 92])
         images.append({"id": n, "file_name": name, "width": frame.shape[1], "height": frame.shape[0], "second": round(t, 2)})
-        d = model.predict(frame, threshold=0.4)
+        d = model.predict(frame, threshold=THRESHOLD)
         for (x1, y1, x2, y2), c, s in zip(d.xyxy, d.class_id, d.confidence):
             if int(c) >= len(CLASSES): continue          # an earlier checkpoint once returned a class id past the last real class (not reproduced since); skip it
             annos.append({"id": len(annos) + 1, "image_id": n, "category_id": int(c) + 1, "bbox": [float(x1), float(y1), float(x2 - x1), float(y2 - y1)],
