@@ -21,7 +21,11 @@ by_data = list(d.data["class_name"])[:8]
 print("class_id                    :", ids)
 print("model.class_names[class_id] :", by_index)
 print("detections.data['class_name']:", by_data)
-print("MISMATCH" if by_index != by_data else "same names (nothing to see on this photo, try one with people)")
+from rfdetr.assets.coco_classes import COCO_CLASSES   # the dictionary keyed by id that RF-DETR's README uses
+by_dict = [COCO_CLASSES[i] for i in ids]
+print("COCO_CLASSES[class_id]         :", by_dict)
+print("MISMATCH between class_names and data" if by_index != by_data else "same names (nothing to see on this photo, try one with people)")
+print("COCO_CLASSES agrees with data['class_name']:", by_dict == by_data)
 
 print("\n== item 2: deprecation warnings that name no replacement ==")
 for w in caught:

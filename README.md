@@ -115,7 +115,7 @@ Tested with rfdetr 1.11.1 and supervision 0.30.6, on Python 3.14 and macOS (Appl
 
 | # | What I found | An idea | Same on the newest release? |
 |---|---|---|---|
-| 1 | `model.class_names[class_id]` gives the wrong name, with no error (people became "bicycle") | Make `class_names` a dictionary keyed by class id, or point its docstring to `detections.data["class_name"]` | Yes |
+| 1 | `model.class_names[class_id]` gives the wrong name, with no error (people became "bicycle"). RF-DETR's README uses `COCO_CLASSES[class_id]`, which is right | One line in the `class_names` docstring: for COCO weights, `class_id` is a COCO id, not a position in this list | Yes |
 | 2 | The deprecation warnings for `RFDETRBase` and `sv.ByteTrack` name no replacement | Put the replacement in the warning text | Yes |
 | 3 | The removed-import message points to a module that lacks what I needed | Point it to `rfdetr.assets.coco_classes` | Yes |
 | 4 | Setting up training took two small steps | A line about each in the quickstart | Not rechecked |
@@ -131,7 +131,7 @@ d.class_id                                       # [1, 4, 1, 1, ...]
 d.data["class_name"]                             # ['person', 'motorcycle', 'person', 'person', ...]
 ```
 
-The ids are COCO's: 1 to 90, with gaps. The name list has 80 entries counted from zero. So a name I looked up by id landed on a different object, and my first video labeled people "bicycle." The right names were in `d.data["class_name"]`, which I only found later. I think the April fix to the class-name lookup for COCO weights (#1005) is why that field is right. 1.11.2 also turned a similar silent shift into an error: a custom class list that includes the Roboflow root category. *Idea:* make `class_names` a dictionary keyed by class id, or add a line to its docstring pointing to `detections.data["class_name"]`.
+The ids are COCO's: 1 to 90, with gaps. The name list has 80 entries counted from zero. So a name I looked up by id landed on a different object, and my first video labeled people "bicycle." The right names were in `d.data["class_name"]`, which I only found later. RF-DETR's README shows the correct way, `COCO_CLASSES[class_id]` from `rfdetr.assets.coco_classes`, which is a dictionary keyed by id, and a note to use `d.data["class_name"]` for fine-tuned models. I missed it because `model.class_names` looked like the obvious place. Its docstring says "0-indexed", which is true, but it does not say that `class_id` is not an index into it for COCO weights. *Idea:* one line in the `class_names` docstring pointing to `COCO_CLASSES` and `detections.data["class_name"]`.
 
 **2. I looked for the replacement in the deprecation warnings.**
 
@@ -140,7 +140,7 @@ RFDETRBase()      # FutureWarning: The `RFDETRBase` was deprecated since v1.7.0.
 sv.ByteTrack()    # FutureWarning: The `ByteTrack` was deprecated since v0.28.0. It will be removed in v0.31.0.
 ```
 
-Neither message names a replacement, but the docs do: `RFDETRBase` is replaced by `RFDETRSmall` (or Nano, Medium, Large) in the [RF-DETR migration guide](https://rfdetr.roboflow.com/latest/getting-started/migration/), and `sv.ByteTrack` by `ByteTrackTracker` from the `trackers` package, with `update_with_detections()` renamed `update()`, on [supervision's deprecated page](https://supervision.roboflow.com/latest/deprecated/). *Idea:* adding the replacement to the warning text would save a trip to the docs.
+Neither message names a replacement, but the docs do: `RFDETRBase` is replaced by `RFDETRSmall` (or Nano, Medium, Large) in the [RF-DETR migration guide](https://rfdetr.roboflow.com/latest/getting-started/migration/), and `sv.ByteTrack` by `ByteTrackTracker` from the `trackers` package, with `update_with_detections()` renamed `update()`, on [supervision's deprecated page](https://supervision.roboflow.com/latest/deprecated/). *Idea:* adding the replacement to the warning text would save a trip to the docs. For `RFDETRBase` it looks like one argument, because the decorator in `rfdetr/variants.py` is set to `target=None`, and the helper library accepts a custom message.
 
 **3. A question about the removed-import message.**
 
@@ -148,7 +148,7 @@ Neither message names a replacement, but the docs do: `RFDETRBase` is replaced b
 import rfdetr.util   # ImportError: rfdetr.util was removed in v1.9.0. Use rfdetr.utilities instead.
 ```
 
-The message sent me to `rfdetr.utilities`, but the class names are not there (`hasattr(rfdetr.utilities, "COCO_CLASS_NAMES")` is `False`). They are in `rfdetr.assets.coco_classes`, where I eventually found them. *Idea:* the message could point there.
+The message sent me to `rfdetr.utilities`, but the class names are not there (`hasattr(rfdetr.utilities, "COCO_CLASS_NAMES")` is `False`). They are in `rfdetr.assets.coco_classes` (`COCO_CLASSES`, the dictionary keyed by id), where I eventually found them. *Idea:* the message could point there.
 
 **4. Setting up training took me two small steps.** `model.train(...)` asked me to install `rfdetr[train,loggers]`, and the error named the command, which was clear. My own requirements file missed it, which is how I ran into it a second time. On macOS the data loader then stopped with Python's generic multiprocessing error until I wrapped the call in `if __name__ == "__main__":`. *Idea:* a line about each in the quickstart might help the next person.
 
