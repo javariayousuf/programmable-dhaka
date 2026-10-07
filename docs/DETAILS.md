@@ -42,7 +42,9 @@ My answer keys started as the original pipeline's own boxes, which I then correc
 
 ## Did the fine-tuned model win anywhere on the Dhaka street?
 
-I looked for frames where it found more rickshaws than the original pipeline. There were only 2, so there is no "where it gained" picture for that test.
+I looked for frames where it found more rickshaws than the original pipeline. With the round 1 models there were only 2, so there was no picture. With the round 2 model (trained on clips 2, 3, 4 and 5) there are enough for three, below. The original pipeline calls the rickshaws carts or bicycles and the fine-tuned model names them. In the top frame the fine-tuned model also calls the bicycle on the left a rickshaw.
+
+![Frames on the Dhaka street where the fine-tuned model found more rickshaws](../media/where_it_wins_dhaka.jpg)
 
 ## What the final model learned from
 

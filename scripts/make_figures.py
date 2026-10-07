@@ -16,7 +16,7 @@ ap.add_argument("--font", default=os.environ.get("FONT_PATH", "/System/Library/F
 args = ap.parse_args()
 
 NAMES = {2: "bicycle", 3: "motorcycle", 4: "rickshaw", 5: "cart"}
-HEX = {1: "#3777ff", 2: "#EC9F05", 3: "#3B0086", 4: "#db3069", 5: "#e0ff4f", 6: "#8a8f98"}
+HEX = {1: "#2de1fc", 2: "#EC9F05", 3: "#3B0086", 4: "#db3069", 5: "#e0ff4f", 6: "#8a8f98", 7: "#8B5E3C"}   # person cyan (brightest, so people pop most), truck brown
 rgb = lambda h: tuple(int(h[i:i + 2], 16) for i in (1, 3, 5))
 FONT = lambda n: ImageFont.truetype(args.font, n)
 OUT = ROOT / "media"
@@ -90,17 +90,16 @@ def draw(img_bgr, items, size=22, width=11):
         tb = dr.textbbox((0, 0), text, font=f); tw, th = tb[2] - tb[0] + 12, tb[3] - tb[1] + 10
         ty = max(0, y1 - th)
         dr.rectangle([x1, ty, x1 + tw, ty + th], fill=col)
-        dr.text((x1 + 6, ty + 3), text, font=f, fill=(255, 255, 255) if cat == 3 else (17, 17, 17))
+        dr.text((x1 + 6, ty + 3), text, font=f, fill=(255, 255, 255) if cat in (3, 7) else (17, 17, 17))
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 
-# Frame colors are the two palette colors used least in the pictures, so they never compete with the boxes people see most.
-# Boxes in the two test clips: bicycle 13, cart 49, motorcycle 79, rickshaw 202, person 1034.
-ORIG_HEX, AFTER_HEX = "#EC9F05", "#e0ff4f"   # original pipeline = bicycle amber, after fine-tuning = cart yellow-green
+# Frame and tab colors are neutral grays, not class colors, so a tab never looks like a bicycle, cart or rickshaw box.
+ORIG_HEX, AFTER_HEX = "#6b7079", "#14161a"   # original pipeline = mid gray, after fine-tuning = near black
 
 
 def panel(img_bgr, text, hex_color):
-    """Thin colored frame and colored label tab, no white margin, so busy pictures can be told apart at a glance."""
+    """Thin frame and label tab in a neutral color, no white margin, so busy pictures can be told apart at a glance."""
     col = rgb(hex_color)
     h, w = img_bgr.shape[:2]
     b = max(4, w // 200)
@@ -108,14 +107,14 @@ def panel(img_bgr, text, hex_color):
     pil = Image.fromarray(cv2.cvtColor(framed, cv2.COLOR_BGR2RGB)); dr = ImageDraw.Draw(pil); f = FONT(max(16, w // 22))
     tb = dr.textbbox((0, 0), text, font=f)
     dr.rectangle([b, b, b + tb[2] + 24, b + tb[3] + 20], fill=col)
-    dr.text((b + 12, b + 8), text, font=f, fill=(17, 17, 17))     # both colors are light, so the text is dark
+    dr.text((b + 12, b + 8), text, font=f, fill=(255, 255, 255))   # white text on the dark tabs
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 
 def render(iid, source, w):
     img = read_blurred(f"{args.images}/{files[iid]}")
     items = [(c, b, NAMES[c]) for c, b, s in source.get(iid, [])]
-    big = draw(img, items, size=34, width=11)
+    big = draw(img, items, size=44, width=18)
     return cv2.resize(big, (w, int(big.shape[0] * w / big.shape[1])), interpolation=cv2.INTER_AREA)
 
 
@@ -168,13 +167,13 @@ tiles = []
 
 def tile(iid, cat, box, label, caption, hex_color):
     img = read_blurred(f"{args.images}/{files[iid]}")
-    img = draw(img, [(cat, box, label)], size=34, width=7)
+    img = draw(img, [(cat, box, label)], size=44, width=14)
     x1, y1, x2, y2 = box; cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
     w = max(x2 - x1, (y2 - y1) * 16 / 9) * 1.5; h = w * 9 / 16
     x0 = int(min(max(cx - w / 2, 0), max(0, img.shape[1] - w))); y0 = int(min(max(cy - h / 2, 0), max(0, img.shape[0] - h)))
     crop = cv2.resize(img[y0:y0 + int(h), x0:x0 + int(w)], (640, 360), interpolation=cv2.INTER_AREA)
     pil = Image.fromarray(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)); canvas = Image.new("RGB", (640, 420), rgb(hex_color))
-    canvas.paste(pil, (0, 0)); ImageDraw.Draw(canvas).text((12, 372), caption, font=FONT(24), fill=(17, 17, 17))
+    canvas.paste(pil, (0, 0)); ImageDraw.Draw(canvas).text((12, 372), caption, font=FONT(24), fill=(255, 255, 255))
     tiles.append(np.array(canvas))
 
 

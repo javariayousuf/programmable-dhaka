@@ -15,7 +15,7 @@ FONT_SIZE = 18  # every piece of text in the video (labels and credit box) uses 
 SLOW = 0.75  # playback speed, 1.0 = real time
 
 CLASSES = ["person", "bicycle", "motorcycle", "rickshaw", "cart", "car"]  # same order the model was trained with
-COLORS = ["#3777ff", "#EC9F05", "#3B0086", "#db3069", "#e0ff4f", "#8a8f98"]  # person blue, bicycle amber, motorcycle deep purple, rickshaw raspberry, cart neon yellow-green, car gray
+COLORS = ["#2de1fc", "#EC9F05", "#3B0086", "#db3069", "#e0ff4f", "#8a8f98", "#8B5E3C"]  # person cyan (brightest, so people pop most), bicycle amber, motorcycle deep purple, rickshaw raspberry, cart neon yellow-green, car gray, truck brown
 palette = sv.ColorPalette.from_hex(COLORS)
 LOOKUP = sv.ColorLookup.CLASS
 
@@ -26,7 +26,7 @@ model = RFDETRSmall(pretrain_weights=WEIGHTS)
 
 tracker = sv.ByteTrack(frame_rate=int(rate), lost_track_buffer=45, minimum_consecutive_frames=3)
 smoother = sv.DetectionsSmoother(length=7)
-boxes = sv.RoundBoxAnnotator(color=palette, color_lookup=LOOKUP, thickness=2, roundness=0.25)
+boxes = sv.RoundBoxAnnotator(color=palette, color_lookup=LOOKUP, thickness=4, roundness=0.25)
 label = sv.RichLabelAnnotator(color=palette, color_lookup=LOOKUP, text_color=sv.Color.from_hex("#111111"),
                               font_path=FONT_PATH, font_size=FONT_SIZE, text_padding=6)
 label_light = sv.RichLabelAnnotator(color=palette, color_lookup=LOOKUP, text_color=sv.Color.WHITE,
@@ -87,7 +87,7 @@ for i, frame in enumerate(sv.get_video_frames_generator(SRC, stride=STRIDE)):
                          head_boxes(heads_src.xyxy, info.width, info.height)])
     out = blur.annotate(frame.copy(), sv.Detections(xyxy=hb)) if len(hb) else frame.copy()
     out = boxes.annotate(out, d)
-    dark = d.class_id != 2  # motorcycle labels (class 2) get white text, everything else dark text
+    dark = ~np.isin(d.class_id, (2, 6))  # motorcycle (2) and truck (6) labels get white text, everything else dark text
     out = label.annotate(out, d[dark], [t for t, k in zip(labels, dark) if k])
     if (~dark).any():
         out = label_light.annotate(out, d[~dark], [t for t, k in zip(labels, dark) if not k])
