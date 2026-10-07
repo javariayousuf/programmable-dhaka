@@ -1,6 +1,37 @@
-{"note": "Final model (trained on clips 2, 3, night, rain) scored on the held-out Dhaka street clip at different confidence cutoffs. The headline numbers use 0.5, the same cutoff the videos use. Choosing the best cutoff on the test clip would be tuning on the test.",
- "cutoffs": {"0.5": {"precision": 0.82, "recall": 0.41, "f1": 0.54, "rickshaw_found_of_39": 10, "cart_found_of_49": 1, "motorcycle_found_of_68": 47},
-             "0.4": {"precision": 0.77, "recall": 0.46, "f1": 0.58, "rickshaw_found_of_39": 15, "cart_found_of_49": 2, "motorcycle_found_of_68": 51},
-             "0.3": {"precision": 0.66, "recall": 0.57, "f1": 0.61, "rickshaw_found_of_39": 21, "cart_found_of_49": 7, "motorcycle_found_of_68": 56},
-             "0.2": {"precision": 0.50, "recall": 0.71, "f1": 0.59, "rickshaw_found_of_39": 34, "cart_found_of_49": 15, "motorcycle_found_of_68": 59}},
- "original_pipeline": {"precision": 0.82, "recall": 0.80, "f1": 0.81}}
+{
+  "note": "Round 2 model (trained on clips 2, 3, 4, 5, no truck class) scored on the held-out clip 1 at different confidence cutoffs, against the corrected answer key. The headline numbers use 0.5, the same cutoff the videos use. Choosing the best cutoff on the test clip would be tuning on the test.",
+  "cutoffs": {
+    "0.5": {
+      "precision": 0.823,
+      "recall": 0.34,
+      "f1": 0.481,
+      "rickshaw_found_of_39": 20,
+      "cart_found_of_67": 1,
+      "motorcycle_found_of_73": 36
+    },
+    "0.4": {
+      "precision": 0.741,
+      "recall": 0.419,
+      "f1": 0.535,
+      "rickshaw_found_of_39": 26,
+      "cart_found_of_67": 3,
+      "motorcycle_found_of_73": 43
+    },
+    "0.3": {
+      "precision": 0.676,
+      "recall": 0.524,
+      "f1": 0.59,
+      "rickshaw_found_of_39": 30,
+      "cart_found_of_67": 13,
+      "motorcycle_found_of_73": 47
+    },
+    "0.2": {
+      "precision": 0.542,
+      "recall": 0.675,
+      "f1": 0.601,
+      "rickshaw_found_of_39": 36,
+      "cart_found_of_67": 24,
+      "motorcycle_found_of_73": 57
+    }
+  }
+}

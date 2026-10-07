@@ -2,18 +2,21 @@
 
 The methodology behind the README, for anyone who wants to check it.
 
+The score tables below were rerun in October 2026 against answer keys where I had drawn in the missing boxes (see the [experiment log](EXPERIMENT_LOG.md)). The pictures and GIFs were made with the round 1 models and were not remade. The round 1 scores are still in [`eval/`](../eval/) (`results_*.json`) and at the `round-1` tag.
+
 ## How the tests were scored
 
 Boxes are matched at 50% overlap, by class, vehicles only. People are left out because the person labels were never hand-reviewed: they are the pretrained model's own output. "Overall score" is F1, which runs from 0 to 1 and balances finding things against false alarms. The accuracy printed in training logs is ignored, because its validation pictures overlap the training pictures.
 
 | Test | Trained on | Scored on | Original pipeline | Fine-tuned |
 |---|---|---|---|---|
-| 1, first run | Dhaka street, e-rickshaws | rickshaw street | 0.29 | 0.79 |
-| 1, second run | Dhaka street, e-rickshaws | rickshaw street | 0.29 | 0.80 |
-| 2 | rickshaw street, e-rickshaws | Dhaka street | 0.81 | 0.44 |
-| 2, more footage | rickshaw street, e-rickshaws, night, rainy walk | Dhaka street | 0.81 | 0.54 |
+| 1 | clips 1 and 2 (Dhaka street, e-rickshaws) | clip 3 (rickshaw street) | 0.27 | 0.76 |
+| 2 | clips 2 and 3 (e-rickshaws, rickshaw street) | clip 1 (Dhaka street) | 0.75 | 0.43 |
+| 2, more footage | clips 2, 3, 4, 5 (adds night, rainy walk) | clip 1 (Dhaka street) | 0.75 | 0.48 |
 
-Rickshaws found on the rickshaw street (of 163): original 45, fine-tuned 131 (first run) and 135 (second run). The scores are in [`eval/`](../eval/).
+Round 1 scores, against the earlier answer keys: Test 1 was 0.29 against 0.79 and 0.80 (two runs), Test 2 was 0.81 against 0.44, and 0.81 against 0.54 with more footage.
+
+Rickshaws found on the rickshaw street (of 179): original 44, fine-tuned 138. In round 1, against the earlier key (of 163), the original found 45 and the fine-tuned model 131 and 135 in two runs. The scores are in [`eval/`](../eval/) (`redo_*.json`).
 
 An earlier version trained on the Dhaka street clip alone and tested on the e-rickshaw clip found rickshaws well (40 of 45, up from 9) but found 0 of 50 banana carts, because the Dhaka street clip has none ([`eval/results_trained_on_clip1_only.json`](../eval/results_trained_on_clip1_only.json)).
 
@@ -25,12 +28,13 @@ Test 1 trained on 141 pictures, but pictures are 0.2 seconds apart, so many are 
 
 The model only draws a box when it is at least 50% sure. Lowering that finds more and adds false alarms. The headline numbers use 0.5, the same cutoff the videos use. Picking the best cutoff using the test clip would be tuning on the test.
 
-| Cutoff | Overall score | Rickshaws found (of 39) | Carts found (of 49) |
+| Cutoff | Overall score | Rickshaws found (of 39) | Carts found (of 67) |
 |---|---|---|---|
-| 0.5 | 0.54 | 10 | 1 |
-| 0.3 | 0.61 | 21 | 7 |
-| 0.2 | 0.59 | 34 | 15 |
-| Original pipeline | 0.81 | 18 | 41 |
+| 0.5 | 0.48 | 20 | 1 |
+| 0.4 | 0.54 | 26 | 3 |
+| 0.3 | 0.59 | 30 | 13 |
+| 0.2 | 0.60 | 36 | 24 |
+| Original pipeline | 0.75 | 18 | 40 |
 
 ## A caveat that favors the original pipeline
 
@@ -78,7 +82,7 @@ With an earlier checkpoint (trained on the rickshaw street and e-rickshaw clips,
 
 - Three short clips per test, one scene each. This shows the loop, and it is not a benchmark.
 - The Dhaka street test has the original pipeline's boxes behind its answer key (see above).
-- Trucks were not labeled as a class (my choice), so the model guesses on them. A rerun with a truck class is the obvious fix.
+- Round 1 did not label trucks as a class. Round 2 added a truck class, which did not clearly help rickshaws (see the [experiment log](EXPERIMENT_LOG.md)). The round 1 models and the training run behind the tables above were trained without it.
 - Two boxes (a motorcycle in the night clip, a car in the rainy clip) were corrected after the final model was trained, so the model saw the earlier labels for them. Both clips are training-only, so no score is affected.
 - One box in the rickshaw street test is ambiguous between bicycle and rickshaw and is not scored.
 - Head blurring uses the model's person detections, so a small face the model missed could still show.
@@ -87,13 +91,13 @@ With an earlier checkpoint (trained on the rickshaw street and e-rickshaw clips,
 
 The stills are 0.2 seconds apart, so many are near-copies. For Test 1 I trained on every 4th still, every 2nd, and all of them:
 
-| Pictures used | Rickshaws found (of 163) | False alarms |
+| Pictures used | Rickshaws found (of 179) | False alarms |
 |---|---|---|
-| 36 (every 4th still) | 124 | 16 |
-| 71 (every 2nd) | 128 | 27 |
-| 141 (all) | 127 | 78 |
+| 36 (every 4th still) | 117 | 80 |
+| 71 (every 2nd) | 136 | 63 |
+| 141 (all) | 133 | 42 |
 
-Dropping three of every four pictures cost almost nothing here, which fits the near-copies. It is one run per row, and training Test 1 twice gave 131 and 135, so differences of a few are inside the noise. The test also only tried evenly spaced subsets, not removing pictures by how alike they are. The results are in [`eval/label_budget_clip3.json`](../eval/label_budget_clip3.json), and `scripts/experiment_label_budget.py` reruns it.
+Dropping half the pictures cost nothing here, which fits the near-copies. Dropping three of every four found 16 fewer rickshaws than using all of them and had about twice the false alarms. It is one run per row, and in round 1 training Test 1 twice gave 131 and 135, so differences of a few are inside the noise and a gap of 16 probably is not. I reran this in October 2026 against the corrected answer key, and the round 1 version (124, 128 and 127 of 163) is in `eval/label_budget_clip3_old_key.json`. The test also only tried evenly spaced subsets, not removing pictures by how alike they are. The results are in [`eval/label_budget_clip3.json`](../eval/label_budget_clip3.json), and `scripts/experiment_label_budget.py` reruns it.
 
 ## More pictures
 
@@ -117,3 +121,5 @@ Dropping three of every four pictures cost almost nothing here, which fits the n
 ![Night traffic](../media/night_traffic.gif)
 
 *The model trained on this clip, so this is not a test.*
+
+A later review of this clip's truck and bus boxes found that 4 of the 58 rickshaw boxes were buses or trucks and 18 of the 379 car boxes were trucks or buses. The table above is the round 1 count.

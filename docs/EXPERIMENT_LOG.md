@@ -1,4 +1,4 @@
-# Experiment log: round 2 (October 3 to 6, 2026)
+# Experiment log: round 2 (October 3 to 7, 2026)
 
 What I tried after the first round, what happened, and why I changed direction. Every number comes from the files in `eval/`. Each score is one training run, and training the same setup twice has moved the rickshaw count by about 4 before, so differences of a few points are noise. Clips are numbered as in the README table.
 
@@ -56,13 +56,26 @@ All scores above use a 0.5 cutoff. Lowering it finds more rickshaws:
 
 I looked at this test clip to see the effect, so I would not call 0.69 the result. A fair version picks the cutoff on one clip and applies it to another.
 
-## 5. What changed
+## 5. Test 1 and Test 2, redone on completed keys
+
+I drew in the missing boxes for clip 3 (31 rickshaws added, 16 wrong boxes removed, 152 to 179 rickshaws) and clip 1 (19 carts and 5 motorcycles added, carts 49 to 67), retrained with the same setup as round 1 (no truck class), and rescored.
+
+| Test | Original pipeline | Fine-tuned | Round 1 (earlier keys) |
+|---|---|---|---|
+| Test on clip 3, trained on 1 + 2 | 0.27 | 0.76 | 0.29 against 0.79 and 0.80 |
+| Test on clip 1, trained on 2 + 3 | 0.75 | 0.43 | 0.81 against 0.44 |
+| Test on clip 1, trained on 2 + 3 + 4 + 5 | 0.75 | 0.48 | 0.81 against 0.54 |
+
+The pattern held. On clip 3 the fine-tuned model found 138 of 179 rickshaws and the original pipeline found 44. On clip 1 the original pipeline found 40 of 67 carts and the fine-tuned models found 3 and 1. In the four-clip run the fine-tuned model was slightly ahead on rickshaws alone, 20 of 39 against 18. Lowering the cutoff to 0.3 on clip 1 raised the overall score from 0.48 to 0.59, with the same caution as above.
+
+The fewer-pictures test, rerun on the corrected clip 3 key: 71 pictures found 136 of 179 rickshaws, all 141 found 133, and 36 found 117 with about twice the false alarms. Halving the pictures cost nothing, and quartering them did.
+
+## 6. What changed
 
 Clips with few rickshaws do not teach the model about rickshaws, and a truck class mostly trims false alarms. What helped was a clear clip, a steady camera, big rickshaws and every one labeled. I also now draw the missing boxes before I trust a clip, either for training or as an answer key.
 
 ## Still open
 
-- Redraw the missing boxes in clips 1 and 3, then rescore Test 1 and Test 2.
 - Repeat a run to see how much of the difference is training randomness.
 - Add clear rickshaw clips and photos, one kind at a time, and keep a test clip the model never sees.
 - Try Roboflow's own tools for finding where a model fails: model evaluation with a confusion matrix, vector analysis, and dataset health checks.

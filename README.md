@@ -25,8 +25,8 @@
 
 - **Plug and play.** All I needed to start was my laptop and free videos I downloaded.
 - **Intelligent modeling from RF-DETR.**
-  - **Pre-labeling.** RF-DETR was already trained on everyday objects, and Grounding DINO (which finds things from a written description) handled rickshaws and carts. Together they drew a first set of labels, each one a box and a name around a vehicle. I call that first-pass setup the original pipeline. I corrected its mistakes instead of drawing every box myself: 39 of 168 boxes on the busy Dhaka street, and about two thirds on the clips that were mostly rickshaws.
-  - **An unknown concept, from a handful of examples.** RF-DETR knows 80 everyday kinds of objects, but it had no word for a rickshaw. I trained it on 141 pictures, but they show only about five different rickshaws, many of them near-copies of each other. About 10 to 15 minutes later, on a laptop, it found about 130 of 163 rickshaws in a clip it had never seen. The original pipeline found 45.
+  - **Pre-labeling.** RF-DETR was already trained on everyday objects, and Grounding DINO (which finds things from a written description) handled rickshaws and carts. Together they drew a first set of labels, each one a box and a name around a vehicle. I call that first-pass setup the original pipeline. I corrected its mistakes instead of drawing every box myself: 39 of 167 boxes on the busy Dhaka street, and about two thirds on the clips that were mostly rickshaws.
+  - **An unknown concept, from a handful of examples.** RF-DETR knows 80 everyday kinds of objects, but it had no word for a rickshaw. I trained it on 141 pictures, but they show only about five different rickshaws, many of them near-copies of each other. About 10 to 15 minutes later, on a laptop, it found about 138 of 179 rickshaws in a clip it had never seen. The original pipeline found 44.
 - **Easy to customize and tune.** supervision let me change how vehicles are followed, how steady the boxes are, what gets blurred, and how everything is drawn. Each one took a few settings.
 - **Everything ran on one laptop,** at about 30 milliseconds per picture.
 
@@ -38,7 +38,7 @@ I'm a Bangladeshi-American who has spent time in Dhaka, Bangladesh. I know from 
 
 I corrected the first-pass labels by hand, with one rule: **anything that carries a passenger behind a driver is a rickshaw**, pedal or motorized. "Fine-tuned" means RF-DETR trained further on those corrected labels. Each test scores the model on a clip it never trained on, against my corrected labels. Scores run from 0 to 1, and higher is better. The tests are small, so I read the numbers as a direction, not a benchmark.
 
-**Update, October 2026.** After the tests below, I found that some of my answer keys were incomplete. My review page only showed vehicles the model had already found, so a rickshaw it missed had no box. Checking one new test clip box by box doubled its rickshaw count, from 165 to 328. The Test 1 and Test 2 numbers below were scored against keys made the same way and I have not rechecked them yet, so they may move. What I found next, including the one change that clearly helped, is in the [experiment log](docs/EXPERIMENT_LOG.md): adding one clear, fully labeled rickshaw clip took rickshaw F1 on a new scene from 0.48 to 0.64.
+**Update, October 2026.** After the tests below, I found that some of my answer keys were incomplete. My review page only showed vehicles the model had already found, so a rickshaw it missed had no box. Checking one new test clip box by box doubled its rickshaw count, from 165 to 328. I then drew in the missing boxes for the two clips Test 1 and Test 2 are scored on (clip 3 went from 163 to 179 rickshaws, and clip 1 went from 49 to 67 carts), retrained, and rescored. The numbers below are the rescored ones, and the pattern held. What I found next, including the one change that clearly helped, is in the [experiment log](docs/EXPERIMENT_LOG.md): adding one clear, fully labeled rickshaw clip took rickshaw F1 on a new scene from 0.48 to 0.64.
 
 The clips are numbered below and in the log. Folder names did not change.
 
@@ -55,7 +55,7 @@ The clips are numbered below and in the log. Folder names did not change.
 
 ### A few different examples can teach something new
 
-*In this case:* about five different rickshaws, shown many times, took RF-DETR from finding 45 of 163 rickshaws to about 130, on a clip it had never seen.
+*In this case:* about five different rickshaws, shown many times, took RF-DETR from finding 44 of 179 rickshaws to about 138, on a clip it had never seen.
 
 ### The model learns what it is shown, and not much more
 
@@ -63,17 +63,17 @@ The clips are numbered below and in the log. Folder names did not change.
 
 ![Three tests](media/chart_two_tests.png)
 
-**Test 1: a steady side-on street, like one of the training clips.** I trained on the Dhaka street and e-rickshaw clips and scored on the rickshaw street clip. The original pipeline found 45 of 163 rickshaws and called 118 of them carts or bicycles. The fine-tuned model found about 130. I trained it twice and got 131 and 135.
+**Test 1: a steady side-on street, like one of the training clips.** I trained on the Dhaka street and e-rickshaw clips and scored on the rickshaw street clip. The original pipeline found 44 of 179 rickshaws and called 116 of them carts or bicycles. The fine-tuned model found 138. (In round 1, scored against an earlier version of the answer key, I trained it twice and got 131 and 135 of 163.)
 
 ![Three frames where it gained](media/where_it_wins_rickshaw_street.jpg)
 
-**Test 2: a crowded, handheld market full of trolley carts.** I trained on the rickshaw street and e-rickshaw clips, which are steady side-on streets with mostly rickshaws, and scored on the Dhaka street clip. The original pipeline scored higher here: 0.81 against 0.44, or 0.54 once I added the night and rainy clips. Most of the gap is carts. The original pipeline found 41 of 49, and the fine-tuned model found 1. My guess, which I have not tested: the market's carts are metal trolleys piled with goods, and the training clips only had banana carts and one umbrella cart.
+**Test 2: a crowded, handheld market full of trolley carts.** I trained on the rickshaw street and e-rickshaw clips, which are steady side-on streets with mostly rickshaws, and scored on the Dhaka street clip. The original pipeline scored higher here: 0.75 against 0.43, or 0.48 once I added the night and rainy clips. Most of the gap is carts. The original pipeline found 40 of 67, and the fine-tuned model found 3 (1 with the night and rainy clips added). On rickshaws alone the fine-tuned model was slightly ahead in that last run, 20 of 39 against 18. My guess, which I have not tested: the market's carts are metal trolleys piled with goods, and the training clips only had banana carts and one umbrella cart.
 
 ![Frames where the original pipeline found more](media/where_it_is_worse_dhaka.jpg)
 
 One caution about how I scored. My answer keys, the corrected labels each test is scored against, started as the original pipeline's own boxes. That gives the original pipeline an advantage. It also scored lower on the rickshaw street, so the advantage does not explain Test 1, but it probably explains some of the gap in Test 2. More in the [details](docs/DETAILS.md).
 
-**What I take from it.** The two approaches seemed strong in different places. The original pipeline found most of the market's carts but often called rickshaws carts or bicycles. The fine-tuned model named rickshaws well but found almost none of the carts, which I think is because it had not been shown that kind. Using both looks like a natural next step, along with training on footage that includes the market's carts.
+**What I take from it.** The two approaches seemed strong in different places. The original pipeline found about 60% of the market's carts but often called rickshaws carts or bicycles. The fine-tuned model named rickshaws well but found almost none of the carts, which I think is because it had not been shown that kind. Using both looks like a natural next step, along with training on footage that includes the market's carts.
 
 ### A scene that is mostly one thing needs the most correcting
 
@@ -81,11 +81,11 @@ One caution about how I scored. My answer keys, the corrected labels each test i
 
 ![How much of the first guess I corrected](media/chart_corrections.png)
 
-On the busy Dhaka street I corrected 23% of the boxes. On the two clips that were mostly rickshaws I corrected 62% and 67%. My guess, which I have not tested: the first-pass tools already handle everyday objects, so a scene full of them needs little correcting, and a scene that is mostly the one thing they have no word for needs correcting almost everywhere. The night and rainy clips started from a model already fine-tuned on those two, so they are not a fair comparison. At night I corrected 86% of the boxes, mostly cars the model had called rickshaws.
+On the busy Dhaka street I corrected 23% of the boxes. On the two clips that were mostly rickshaws I corrected 62% and 68%. My guess, which I have not tested: the first-pass tools already handle everyday objects, so a scene full of them needs little correcting, and a scene that is mostly the one thing they have no word for needs correcting almost everywhere. The night and rainy clips started from a model already fine-tuned on those two, so they are not a fair comparison. At night I corrected 86% of the boxes, mostly cars the model had called rickshaws.
 
 ### Pictures that look almost the same may not teach much extra
 
-*In this case:* training on every 4th picture, 36 in all, found 124 of 163 rickshaws. Training on all 141 found 127. That is one run each, and training the same setup twice gave 131 and 135, so the difference is inside the noise. More in the [details](docs/DETAILS.md).
+*In this case:* training on every 2nd picture, 71 in all, found 136 of 179 rickshaws. Training on all 141 found 133. Training on every 4th picture, 36 in all, found 117 and had about twice the false alarms, so halving the pictures cost nothing and quartering them cost something. That is one run each, and in round 1 the same setup trained twice differed by 4, so the 71 against 141 gap is noise and the 36 against 141 gap is probably not. More in the [details](docs/DETAILS.md).
 
 ## Limits
 
@@ -136,7 +136,7 @@ Neither message names a replacement, but the docs do: `RFDETRBase` is replaced b
 
 - What makes one scene count as "similar" to another for the model? Is it the camera angle, how crowded it is, the time of day, the weather, or the mix of vehicles? And which kinds of clips would teach it rickshaws best? I would test it by adding one kind of clip at a time (night, rain, a crowded market, a new camera angle) and scoring each on the same clips every time.
 - Could Grounding DINO (which finds things from a written description) and the fine-tuned model work together, so the carts get found too?
-- How should near-duplicate frames be handled when labeling video? These are stills a fraction of a second apart that look almost the same. In one test, 36 pictures did about as well as 141.
+- How should near-duplicate frames be handled when labeling video? These are stills a fraction of a second apart that look almost the same. In one test, 71 pictures did about as well as 141, and 36 did somewhat worse.
 - Would RF-DETR still be fast enough at the edge, on the small computer that sits next to a camera? I measured about 30 milliseconds per picture on a laptop, and I have not measured a small device.
 
 ## Scores, how to rerun it, and tips

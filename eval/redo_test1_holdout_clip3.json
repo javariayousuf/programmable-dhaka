@@ -1,0 +1,202 @@
+{
+  "clip3": {
+    "images": 86,
+    "finetuned": {
+      "bicycle": {
+        "tp": 0,
+        "fp": 4,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 0
+      },
+      "motorcycle": {
+        "tp": 8,
+        "fp": 9,
+        "fn": 2,
+        "precision": 0.471,
+        "recall": 0.8,
+        "f1": 0.593,
+        "gt": 10
+      },
+      "rickshaw": {
+        "tp": 138,
+        "fp": 34,
+        "fn": 41,
+        "precision": 0.802,
+        "recall": 0.771,
+        "f1": 0.786,
+        "gt": 179
+      },
+      "cart": {
+        "tp": 0,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 0
+      },
+      "truck": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 71,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 71
+      },
+      "ALL VEHICLES": {
+        "tp": 146,
+        "fp": 48,
+        "fn": 43,
+        "precision": 0.753,
+        "recall": 0.772,
+        "f1": 0.762,
+        "gt": 189
+      }
+    },
+    "finetuned_confusion": {
+      "bicycle": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 0
+      },
+      "motorcycle": {
+        "bicycle": 0,
+        "motorcycle": 8,
+        "rickshaw": 0,
+        "cart": 1,
+        "truck": 0,
+        "missed": 1
+      },
+      "rickshaw": {
+        "bicycle": 3,
+        "motorcycle": 4,
+        "rickshaw": 138,
+        "cart": 0,
+        "truck": 0,
+        "missed": 34
+      },
+      "cart": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 0
+      },
+      "truck": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 18,
+        "cart": 0,
+        "truck": 0,
+        "missed": 53
+      }
+    },
+    "ms_per_image_median": 29.8,
+    "baseline": {
+      "bicycle": {
+        "tp": 0,
+        "fp": 51,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 0
+      },
+      "motorcycle": {
+        "tp": 10,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.909,
+        "recall": 1.0,
+        "f1": 0.952,
+        "gt": 10
+      },
+      "rickshaw": {
+        "tp": 44,
+        "fp": 1,
+        "fn": 135,
+        "precision": 0.978,
+        "recall": 0.246,
+        "f1": 0.393,
+        "gt": 179
+      },
+      "cart": {
+        "tp": 0,
+        "fp": 111,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 0
+      },
+      "truck": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 71,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 71
+      },
+      "ALL VEHICLES": {
+        "tp": 54,
+        "fp": 164,
+        "fn": 135,
+        "precision": 0.248,
+        "recall": 0.286,
+        "f1": 0.265,
+        "gt": 189
+      }
+    },
+    "baseline_confusion": {
+      "bicycle": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 0
+      },
+      "motorcycle": {
+        "bicycle": 0,
+        "motorcycle": 10,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 0
+      },
+      "rickshaw": {
+        "bicycle": 47,
+        "motorcycle": 0,
+        "rickshaw": 44,
+        "cart": 69,
+        "truck": 0,
+        "missed": 19
+      },
+      "cart": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 0
+      },
+      "truck": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 1,
+        "cart": 41,
+        "truck": 0,
+        "missed": 29
+      }
+    }
+  }
+}
