@@ -152,10 +152,10 @@ The message sent me to `rfdetr.utilities`, but the class names are not there (`h
 
 ## Questions I'd like to dig into
 
-- What makes one scene count as "similar" to another for the model? Is it the camera angle, how crowded it is, the time of day, the weather, or the mix of vehicles? And which kinds of clips would teach it rickshaws best? I would test it by adding one kind of clip at a time (night, rain, a crowded market, a new camera angle) and scoring each on the same clips every time.
-- Could Grounding DINO (which finds things from a written description) and the fine-tuned model work together, so the carts get found too?
-- How should near-duplicate frames be handled when labeling video? These are stills a fraction of a second apart that look almost the same. In one test, 71 pictures did about as well as 141, and 36 did somewhat worse.
-- Would RF-DETR still be fast enough at the edge, on the small computer that sits next to a camera? I measured about 30 milliseconds per picture on a laptop, and I have not measured a small device.
+- What makes one scene "similar" to another for the model? Is it the camera angle, how crowded it is, the time of day, the weather, or the mix of vehicles? I would add one kind of clip at a time (night, rain, a crowded market, a new angle) and score each on the same clips. That would also show which clips teach rickshaws best.
+- Could Grounding DINO and the fine-tuned model work together, so the carts get found too?
+- How should near-duplicate frames be handled? These are stills a fraction of a second apart that look almost the same. In one test, 71 pictures did as well as 141, and 36 did somewhat worse.
+- Would RF-DETR be fast enough at the edge, on the small computer next to a camera? I measured about 30 milliseconds per picture on a laptop. I have not measured a small device.
 
 ## Scores, how to rerun it, and tips
 
