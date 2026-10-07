@@ -23,12 +23,21 @@
 
 ## Reasons to try Roboflow's open source tools
 
-- **Plug and play.** All I needed to start was my laptop and free videos I downloaded.
-- **Intelligent modeling from RF-DETR.**
-  - **Pre-labeling.** RF-DETR was already trained on everyday objects, and Grounding DINO (which finds things from a written description) handled rickshaws and carts. Together they drew a first set of labels, each one a box and a name around a vehicle. I call that first-pass setup the original pipeline. I corrected its mistakes instead of drawing every box myself: 39 of 167 boxes on the busy Dhaka street, and about two thirds on the clips that were mostly rickshaws.
-  - **An unknown concept, from a handful of examples.** RF-DETR knows 80 everyday kinds of objects, but it had no word for a rickshaw. I trained it on 141 pictures, but they show only about five different rickshaws, many of them near-copies of each other. About 10 to 15 minutes later, on a laptop, it found about 138 of 179 rickshaws in a clip it had never seen. The original pipeline found 44.
-- **Easy to customize and tune.** supervision let me change how vehicles are followed, how steady the boxes are, what gets blurred, and how everything is drawn. Each one took a few settings.
-- **Everything ran on one laptop,** at about 30 milliseconds per picture.
+**Plug and play.** All I needed to start was my laptop and free videos I downloaded.
+
+| What I wanted | What I used | What happened |
+|---|---|---|
+| First labels without drawing every box | RF-DETR, which already knows everyday objects, and Grounding DINO, which finds things from a written description, for rickshaws and carts | I corrected the first guess instead of drawing every box: 23% of the boxes on the busy Dhaka street, and about two thirds on the clips that were mostly rickshaws |
+| A name for something RF-DETR did not know | Fine-tuned RF-DETR (80 everyday objects, no word for rickshaw) on 141 pictures that show only about five different rickshaws | On a clip it never saw, it went from finding 44 of 179 rickshaws to 138, about 10 to 15 minutes of training on a laptop |
+| A better model with another pass | The same loop: predict, correct, retrain | Adding one clear, fully labeled clip took rickshaw F1 on an unseen scene from 0.48 to 0.64 ([experiment log](docs/EXPERIMENT_LOG.md)) |
+| Steady, readable video | supervision: tracking, box smoothing, blurring and drawing | Each took a few settings, and together they made the picture at the top |
+| To run all of it myself | One laptop | About 30 milliseconds per picture |
+
+![The original pipeline and the fine-tuned model on a clip the model never trained on](media/before_after_rickshaw_street.gif)
+
+*Test 1: the original pipeline on the left, the fine-tuned model on the right.*
+
+The limit, so it sits next to the claims: on a scene unlike what it trained on, the model still misses a third to a half of the rickshaws, and on the crowded market the original pipeline scored higher (see below).
 
 ## Why Dhaka
 
@@ -98,11 +107,20 @@ More pictures of the mistakes are in the [details](docs/DETAILS.md).
 
 ## Product feedback
 
-Tested with rfdetr 1.11.1 and supervision 0.30.6, on Python 3.14 and macOS (Apple silicon). Each item shows what I ran, what came back, and an idea. I may be missing a better way to do some of these, so please read them as questions as much as suggestions.
+Tested with rfdetr 1.11.1 and supervision 0.30.6, on Python 3.14 and macOS (Apple silicon). I checked again on October 7, 2026 with rfdetr 1.11.2 and supervision 0.30.8: items 1 to 3 behave the same way, and I did not recheck item 4. Each item shows what I ran, what came back, and an idea. I may be missing a better way to do some of these, so please read them as questions as much as suggestions.
 
 <img src="media/claude_orange.png" width="12" height="12" alt=""> Summarized by Claude Code.
 
-**1. I found `model.class_names` and `class_id` hard to line up.**
+| # | What I found | An idea | Same on the newest release? |
+|---|---|---|---|
+| 1 | `model.class_names[class_id]` gives the wrong name, with no error (people became "bicycle") | Make `class_names` a dictionary keyed by class id, or point its docstring to `detections.data["class_name"]` | Yes |
+| 2 | The deprecation warnings for `RFDETRBase` and `sv.ByteTrack` name no replacement | Put the replacement in the warning text | Yes |
+| 3 | The removed-import message points to a module that lacks what I needed | Point it to `rfdetr.assets.coco_classes` | Yes |
+| 4 | Setting up training took two small steps | A line about each in the quickstart | Not rechecked |
+
+To see items 1 to 3 yourself in a few seconds, run [`docs/feedback_repro.py`](docs/feedback_repro.py) on any street photo.
+
+**1. `model.class_names[class_id]` gives the wrong name, with no error.**
 
 ```python
 d = model.predict(image, threshold=0.5)          # model = RFDETRBase()
@@ -111,17 +129,9 @@ d.class_id                                       # [1, 4, 1, 1, ...]
 d.data["class_name"]                             # ['person', 'motorcycle', 'person', 'person', ...]
 ```
 
-The ids are COCO's: 1 to 90, with gaps. The name list has 80 entries counted from zero. So a name I looked up by id landed on a different object, and my first video labeled people "bicycle." The right names were in `d.data["class_name"]`, which I only found later. *Idea:* make `class_names` a dictionary keyed by class id, or add a line to its docstring pointing to `detections.data["class_name"]`.
+The ids are COCO's: 1 to 90, with gaps. The name list has 80 entries counted from zero. So a name I looked up by id landed on a different object, and my first video labeled people "bicycle." The right names were in `d.data["class_name"]`, which I only found later. I think the April fix to the class-name lookup for COCO weights (#1005) is why that field is right. And it looks like the same kind of silent shift that 1.11.2 turned into an error for custom class lists that include the Roboflow root category. *Idea:* make `class_names` a dictionary keyed by class id, or add a line to its docstring pointing to `detections.data["class_name"]`.
 
-**2. A question about the removed-import message.**
-
-```python
-import rfdetr.util   # ImportError: rfdetr.util was removed in v1.9.0. Use rfdetr.utilities instead.
-```
-
-The message sent me to `rfdetr.utilities`, but the class names are not there (`hasattr(rfdetr.utilities, "COCO_CLASS_NAMES")` is `False`). They are in `rfdetr.assets.coco_classes`, where I eventually found them. *Idea:* the message could point there.
-
-**3. I looked for the replacement in the deprecation warnings.**
+**2. I looked for the replacement in the deprecation warnings.**
 
 ```python
 RFDETRBase()      # FutureWarning: The `RFDETRBase` was deprecated since v1.7.0. It will be removed in v2.0.0.
@@ -130,7 +140,15 @@ sv.ByteTrack()    # FutureWarning: The `ByteTrack` was deprecated since v0.28.0.
 
 Neither message names a replacement, but the docs do: `RFDETRBase` is replaced by `RFDETRSmall` (or Nano, Medium, Large) in the [RF-DETR migration guide](https://rfdetr.roboflow.com/latest/getting-started/migration/), and `sv.ByteTrack` by `ByteTrackTracker` from the `trackers` package, with `update_with_detections()` renamed `update()`, on [supervision's deprecated page](https://supervision.roboflow.com/latest/deprecated/). *Idea:* adding the replacement to the warning text would save a trip to the docs.
 
-**4. Setting up training took me two small steps.** `model.train(...)` asked me to install `rfdetr[train]`, and the error named the command, which was clear. On macOS the data loader then stopped with Python's generic multiprocessing error until I wrapped the call in `if __name__ == "__main__":`. *Idea:* a line about each in the quickstart might help the next person.
+**3. A question about the removed-import message.**
+
+```python
+import rfdetr.util   # ImportError: rfdetr.util was removed in v1.9.0. Use rfdetr.utilities instead.
+```
+
+The message sent me to `rfdetr.utilities`, but the class names are not there (`hasattr(rfdetr.utilities, "COCO_CLASS_NAMES")` is `False`). They are in `rfdetr.assets.coco_classes`, where I eventually found them. *Idea:* the message could point there.
+
+**4. Setting up training took me two small steps.** `model.train(...)` asked me to install `rfdetr[train,loggers]`, and the error named the command, which was clear. My own requirements file missed it, which is how I ran into it a second time. On macOS the data loader then stopped with Python's generic multiprocessing error until I wrapped the call in `if __name__ == "__main__":`. *Idea:* a line about each in the quickstart might help the next person.
 
 ## Questions I'd like to dig into
 
