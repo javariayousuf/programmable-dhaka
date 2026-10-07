@@ -14,6 +14,8 @@ Boxes are matched at 50% overlap, by class, vehicles only. People are left out b
 | 2 | clips 2 and 3 (e-rickshaws, rickshaw street) | clip 1 (Dhaka street) | 0.75 | 0.43 |
 | 2, more footage | clips 2, 3, 4, 5 (adds night, rainy walk) | clip 1 (Dhaka street) | 0.75 | 0.48 |
 
+On clip 8, the roundabout (328 rickshaws, never trained on), the original pipeline scored 0.28 overall and found 36 rickshaws. A model trained on clips 1 to 4 scored 0.54 and found 168. The best model scored 0.67 and found 160 ([`eval/vs_original_*`](../eval/)).
+
 Round 1 scores, against the earlier answer keys: Test 1 was 0.29 against 0.79 and 0.80 (two runs), Test 2 was 0.81 against 0.44, and 0.81 against 0.54 with more footage.
 
 Rickshaws found on the rickshaw street (of 179): original 44, fine-tuned 138. In round 1, against the earlier key (of 163), the original found 45 and the fine-tuned model 131 and 135 in two runs. The scores are in [`eval/`](../eval/) (`redo_*.json`).

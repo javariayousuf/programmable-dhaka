@@ -70,7 +70,19 @@ The pattern held. On clip 3 the fine-tuned model found 138 of 179 rickshaws and 
 
 The fewer-pictures test, rerun on the corrected clip 3 key: 71 pictures found 136 of 179 rickshaws, all 141 found 133, and 36 found 117 with about twice the false alarms. Halving the pictures cost nothing, and quartering them did.
 
-## 6. What changed
+## 6. Fine-tuning against the original pipeline, on the roundabout
+
+I had not run the original pipeline on clip 8, so I did (`scripts/original_pipeline_on_stills.py`). On the 328 rickshaws, cutoff 0.5:
+
+| Model | Rickshaws found | False alarms | Rickshaw F1 | Motorcycle F1 | Overall F1 |
+|---|---|---|---|---|---|
+| Original pipeline, no training | 36 | 1 | 0.20 | 0.66 | 0.28 |
+| Fine-tuned on clips 1, 2, 3, 4 | 168 | 88 | 0.57 | 0.43 | 0.54 |
+| Fine-tuned, truck class, clips 1 to 4, 6, 7 | 160 | 14 | 0.64 | 0.76 | 0.67 |
+
+The original pipeline called 62 of the rickshaws bicycles and 79 carts, and missed 150. So fine-tuning helped a lot for rickshaws on both rickshaw-heavy test clips (clip 3 and clip 8). It did not help on the crowded market (clip 1), where the original pipeline found more of the carts, motorcycles and bicycles.
+
+## 7. What changed
 
 Clips with few rickshaws do not teach the model about rickshaws, and a truck class mostly trims false alarms. What helped was a clear clip, a steady camera, big rickshaws and every one labeled. I also now draw the missing boxes before I trust a clip, either for training or as an answer key.
 

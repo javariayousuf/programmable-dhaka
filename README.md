@@ -64,7 +64,7 @@ The clips are numbered below and in the log. The folder names did not change.
 
 ### A few different examples can teach something new
 
-*In this case:* about five different rickshaws, shown many times, took RF-DETR from finding 44 of 179 rickshaws to about 138 on a clip it had never seen.
+*In this case:* about five different rickshaws, shown many times, took RF-DETR from finding 44 of 179 rickshaws to about 138 on a clip it had never seen. On a second new clip, a roundabout, it went from 36 of 328 to about 165.
 
 ### It did best on scenes like the ones I trained on
 
@@ -76,9 +76,11 @@ The clips are numbered below and in the log. The folder names did not change.
 
 ![Three frames where it gained](media/where_it_wins_rickshaw_street.jpg)
 
-**Test 2: a crowded, handheld market full of trolley carts.** I trained on clips 2 and 3, steady streets with mostly rickshaws, and tested on clip 1, the Dhaka street. Here the original pipeline scored higher: 0.75 against 0.43, or 0.48 once I added the night and rainy clips. Most of the gap is carts. The original pipeline found 40 of 67 and the fine-tuned model found 3, or 1 with the night and rainy clips. On rickshaws alone, the fine-tuned model was slightly ahead in that last run, 20 of 39 against 18. My guess, which I have not tested: the market's carts are metal trolleys piled with goods, and the training clips only had banana carts and one umbrella cart.
+**Test 2: a crowded, handheld market full of trolley carts.** I trained on clips 2 and 3, steady streets with mostly rickshaws, and tested on clip 1, the Dhaka street. Here the original pipeline scored higher: 0.75 against 0.43, or 0.48 once I added the night and rainy clips. Most of the gap is carts. The original pipeline found 40 of 67 and the fine-tuned model found 3, or 1 with the night and rainy clips. On rickshaws alone, the fine-tuned model was slightly ahead in that last run, 20 of 39 against 18. It also got worse at motorcycles, 36 to 42 of 73 against 63, and at bicycles. My guess, which I have not tested: I showed it few of those, and the market's carts are metal trolleys piled with goods, while the training clips only had banana carts and one umbrella cart.
 
 ![Frames where the original pipeline found more](media/where_it_is_worse_dhaka.jpg)
+
+**Test 3: a roundabout full of decorated pedal rickshaws.** This is a clip none of the models trained on, with 328 rickshaws. The original pipeline found 36 of them and called 62 bicycles and 79 carts. A model trained on clips 1 to 4 found 168. The best model I have, trained with the truck class and two more clips, found 160 with 14 false alarms instead of 88. So on a scene that is mostly rickshaws, fine-tuning helped a lot. It did not help on the crowded market, because most of what is there is carts, motorcycles and bicycles, which the original pipeline already handled and the fine-tuned model saw few of.
 
 One caution on the scoring. My answer keys started as the original pipeline's own boxes, which I then corrected. That favors the original pipeline, because its box shapes line up with the key. It still lost on the rickshaw street, so that does not explain Test 1. It probably explains some of the gap in Test 2. More in the [details](docs/DETAILS.md).
 
