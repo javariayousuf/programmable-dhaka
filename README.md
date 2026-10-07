@@ -111,14 +111,17 @@ More pictures of the mistakes are in the [details](docs/DETAILS.md).
 
 Tested with rfdetr 1.11.1 and supervision 0.30.6, on Python 3.14 and macOS (Apple silicon). I checked again on October 7, 2026 with rfdetr 1.11.2 and supervision 0.30.8: items 1 to 3 behave the same way, and I did not recheck item 4. Each item shows what I ran, what came back, and an idea. I may be missing a better way to do some of these, so please read them as questions as much as suggestions.
 
+Two of these I filed upstream, with a fix ready for each: [rf-detr #1611](https://github.com/roboflow/rf-detr/issues/1611) and [rf-detr #1610](https://github.com/roboflow/rf-detr/issues/1610).
+
 <img src="media/claude_orange.png" width="12" height="12" alt=""> Summarized by Claude Code.
 
-| # | What I found | An idea | Same on the newest release? |
-|---|---|---|---|
-| 1 | `model.class_names[class_id]` gives the wrong name, with no error (people became "bicycle"). RF-DETR's README uses `COCO_CLASSES[class_id]`, which is right | One line in the `class_names` docstring: for COCO weights, `class_id` is a COCO id, not a position in this list | Yes |
-| 2 | The deprecation warnings for `RFDETRBase` and `sv.ByteTrack` name no replacement | Put the replacement in the warning text | Yes |
-| 3 | The removed-import message points to a module that lacks what I needed | Point it to `rfdetr.assets.coco_classes` | Yes |
-| 4 | Setting up training took two small steps | A line about each in the quickstart | Not rechecked |
+| # | What I found | An idea | Same on the newest release? | Filed upstream |
+|---|---|---|---|---|
+| 1 | `model.class_names[class_id]` gives the wrong name, with no error (people became "bicycle"). RF-DETR's README uses `COCO_CLASSES[class_id]`, which is right | One line in the `class_names` docstring: for COCO weights, `class_id` is a COCO id, not a position in this list | Yes | No. The README already covers most of it |
+| 2 | The deprecation warnings for `RFDETRBase` and `sv.ByteTrack` name no replacement | Put the replacement in the warning text | Yes | [#1611](https://github.com/roboflow/rf-detr/issues/1611) for `RFDETRBase`. `ByteTrack` is being removed in 0.31.0 |
+| 3 | The removed-import message points to a module that lacks what I needed | Point it to `rfdetr.assets.coco_classes` | Yes | No |
+| 4 | Setting up training took two small steps | A line about each in the quickstart | Not rechecked | No |
+| 5 | The setup instructions for AI agents tell contributors to run `uv sync --all-groups`, which fails | Point both files at the commands in `CONTRIBUTING.md` | Yes | [#1610](https://github.com/roboflow/rf-detr/issues/1610) |
 
 To see items 1 to 3 yourself in a few seconds, run [`docs/feedback_repro.py`](docs/feedback_repro.py) on any street photo.
 
@@ -140,7 +143,7 @@ RFDETRBase()      # FutureWarning: The `RFDETRBase` was deprecated since v1.7.0.
 sv.ByteTrack()    # FutureWarning: The `ByteTrack` was deprecated since v0.28.0. It will be removed in v0.31.0.
 ```
 
-Neither message names a replacement, but the docs do: `RFDETRBase` is replaced by `RFDETRSmall` (or Nano, Medium, Large) in the [RF-DETR migration guide](https://rfdetr.roboflow.com/latest/getting-started/migration/), and `sv.ByteTrack` by `ByteTrackTracker` from the `trackers` package, with `update_with_detections()` renamed `update()`, on [supervision's deprecated page](https://supervision.roboflow.com/latest/deprecated/). *Idea:* adding the replacement to the warning text would save a trip to the docs. For `RFDETRBase` it looks like one argument, because the decorator in `rfdetr/variants.py` is set to `target=None`, and the helper library accepts a custom message.
+Neither message names a replacement, but the docs do. The [RF-DETR migration guide](https://rfdetr.roboflow.com/latest/getting-started/migration/) points `RFDETRBase` to `RFDETRSmall` (or Nano, Medium, Large), and [supervision's deprecated page](https://supervision.roboflow.com/latest/deprecated/) points `sv.ByteTrack` to `ByteTrackTracker` from the `trackers` package, with `update_with_detections()` renamed `update()`. *Idea:* put the replacement in the warning text. For `RFDETRBase` that is one argument: the decorator in `rfdetr/variants.py` has `target=None`, and the helper library takes a custom message. I tried it, and RF-DETR's full test suite passes (7,868 tests). One thing I noticed: `RFDETRBase` and `RFDETRSmall` are not quite the same model (560 px and patch size 14, against 512 px and patch size 16, each with its own weights). So I asked about the migration guide's line that Base "defaulted to the small variant." Filed as [rf-detr #1611](https://github.com/roboflow/rf-detr/issues/1611). I did not file the `ByteTrack` half, because it is being removed in 0.31.0.
 
 **3. A question about the removed-import message.**
 
@@ -151,6 +154,8 @@ import rfdetr.util   # ImportError: rfdetr.util was removed in v1.9.0. Use rfdet
 The message sent me to `rfdetr.utilities`, but the class names are not there (`hasattr(rfdetr.utilities, "COCO_CLASS_NAMES")` is `False`). They are in `rfdetr.assets.coco_classes` (`COCO_CLASSES`, the dictionary keyed by id), where I eventually found them. *Idea:* the message could point there.
 
 **4. Setting up training took me two small steps.** `model.train(...)` asked me to install `rfdetr[train,loggers]`, and the error named the command, which was clear. My own requirements file missed it, which is how I ran into it a second time. On macOS the data loader then stopped with Python's generic multiprocessing error until I wrapped the call in `if __name__ == "__main__":`. *Idea:* a line about each in the quickstart might help the next person.
+
+**5. The setup instructions for AI agents tell contributors to run a command that fails.** `AGENTS.md` and `.github/copilot-instructions.md` in the RF-DETR repo say to run `uv sync --all-groups`. It stops with `error: Groups ci-executorch-pin and typing are incompatible`. I checked with uv 0.12.23 and with 0.9.26, the version their CI pins. `CONTRIBUTING.md` was fixed on September 2 (#1407), and the same day #1418 made `--all-groups` impossible, but the two agent files were not updated. The `uv pip install` commands from `CONTRIBUTING.md` worked, and the full test suite passed from that install. *Idea:* point both files at those commands. Filed as [rf-detr #1610](https://github.com/roboflow/rf-detr/issues/1610).
 
 ## Questions I'd like to dig into
 
