@@ -37,7 +37,7 @@
 
 *Test 1: the original pipeline on the left, the fine-tuned model on the right.*
 
-The limit, so it sits next to the claims: on a scene unlike what it trained on, the model still misses a third to a half of the rickshaws, and on the crowded market the original pipeline scored higher (see below).
+One limit: on a scene unlike what it trained on, the model still misses a third to a half of the rickshaws, and on the crowded market the original pipeline scored higher (see below).
 
 ## Why Dhaka
 
@@ -45,11 +45,11 @@ I'm a Bangladeshi-American who has spent time in Dhaka, Bangladesh. I know from 
 
 ## What I learned
 
-I corrected the first-pass labels by hand, with one rule: **anything that carries a passenger behind a driver is a rickshaw**, pedal or motorized. "Fine-tuned" means RF-DETR trained further on those corrected labels. Each test scores the model on a clip it never trained on, against my corrected labels. Scores run from 0 to 1, and higher is better. The tests are small, so I read the numbers as a direction, not a benchmark.
+I corrected the first-pass labels by hand, with one rule: **anything that carries a passenger behind a driver is a rickshaw**, pedal or motorized. "Fine-tuned" means I trained RF-DETR further on those corrected labels. Each test scores the model on a clip it never trained on, against my corrected labels. Scores run from 0 to 1, higher is better. The tests are small, so read the numbers as a direction, not a benchmark.
 
-**Update, October 2026.** After the tests below, I found that some of my answer keys were incomplete. My review page only showed vehicles the model had already found, so a rickshaw it missed had no box. Checking one new test clip box by box doubled its rickshaw count, from 165 to 328. I then drew in the missing boxes for the two clips Test 1 and Test 2 are scored on (clip 3 went from 163 to 179 rickshaws, and clip 1 went from 49 to 67 carts), retrained, and rescored. The numbers below are the rescored ones, and the pattern held. What I found next, including the one change that clearly helped, is in the [experiment log](docs/EXPERIMENT_LOG.md): adding one clear, fully labeled rickshaw clip took rickshaw F1 on a new scene from 0.48 to 0.64.
+**Update, October 2026.** Some of my answer keys were missing boxes. My review page only showed vehicles the model had already found, so a rickshaw it missed had no box. On a new test clip, drawing those in took the rickshaw count from 165 to 328. I did the same for the two clips Test 1 and Test 2 use. Clip 3 went from 163 to 179 rickshaws, and clip 1 went from 49 to 67 carts. Then I retrained and rescored. The numbers below are the rescored ones, and the pattern held. What I did next is in the [experiment log](docs/EXPERIMENT_LOG.md). The one change that clearly helped: adding one clear, fully labeled rickshaw clip took rickshaw F1 on a new scene from 0.48 to 0.64.
 
-The clips are numbered below and in the log. Folder names did not change.
+The clips are numbered below and in the log. The folder names did not change.
 
 | # | Folder | What is special |
 |---|---|---|
@@ -64,37 +64,37 @@ The clips are numbered below and in the log. Folder names did not change.
 
 ### A few different examples can teach something new
 
-*In this case:* about five different rickshaws, shown many times, took RF-DETR from finding 44 of 179 rickshaws to about 138, on a clip it had never seen.
+*In this case:* about five different rickshaws, shown many times, took RF-DETR from finding 44 of 179 rickshaws to about 138 on a clip it had never seen.
 
-### The model learns what it is shown, and not much more
+### It did best on scenes like the ones I trained on
 
-*In this case, with only a few short clips:* each test trained on two to four short clips, so the model only knows the kinds of scenes in them. Test 1 was scored on a street shot like one of those clips: a steady side-on view, mostly rickshaws. Test 2 was scored on a crowded market shot by hand, full of metal trolley carts, which the training clips did not have. I think that difference explains the gap, and it points to one thing to try: more varied training footage. I have not tested that.
+*In this case:* I tested on two very different clips. On a steady street like the training clips, the fine-tuned model won by a lot. On a crowded market, the original pipeline scored higher. I trained on two to four short clips, so I think the model only knows the kinds of scenes in them. More varied footage looks like the thing to try. I have not tested that.
 
 ![Three tests](media/chart_two_tests.png)
 
-**Test 1: a steady side-on street, like one of the training clips.** I trained on the Dhaka street and e-rickshaw clips and scored on the rickshaw street clip. The original pipeline found 44 of 179 rickshaws and called 116 of them carts or bicycles. The fine-tuned model found 138. (In round 1, scored against an earlier version of the answer key, I trained it twice and got 131 and 135 of 163.)
+**Test 1: a steady, side-on street.** I trained on clips 1 and 2 and tested on clip 3, the rickshaw street. The original pipeline found 44 of 179 rickshaws and called 116 of them carts or bicycles. The fine-tuned model found 138. In round 1, against the older answer key, I trained it twice and got 131 and 135 of 163.
 
 ![Three frames where it gained](media/where_it_wins_rickshaw_street.jpg)
 
-**Test 2: a crowded, handheld market full of trolley carts.** I trained on the rickshaw street and e-rickshaw clips, which are steady side-on streets with mostly rickshaws, and scored on the Dhaka street clip. The original pipeline scored higher here: 0.75 against 0.43, or 0.48 once I added the night and rainy clips. Most of the gap is carts. The original pipeline found 40 of 67, and the fine-tuned model found 3 (1 with the night and rainy clips added). On rickshaws alone the fine-tuned model was slightly ahead in that last run, 20 of 39 against 18. My guess, which I have not tested: the market's carts are metal trolleys piled with goods, and the training clips only had banana carts and one umbrella cart.
+**Test 2: a crowded, handheld market full of trolley carts.** I trained on clips 2 and 3, steady streets with mostly rickshaws, and tested on clip 1, the Dhaka street. Here the original pipeline scored higher: 0.75 against 0.43, or 0.48 once I added the night and rainy clips. Most of the gap is carts. The original pipeline found 40 of 67 and the fine-tuned model found 3, or 1 with the night and rainy clips. On rickshaws alone, the fine-tuned model was slightly ahead in that last run, 20 of 39 against 18. My guess, which I have not tested: the market's carts are metal trolleys piled with goods, and the training clips only had banana carts and one umbrella cart.
 
 ![Frames where the original pipeline found more](media/where_it_is_worse_dhaka.jpg)
 
-One caution about how I scored. My answer keys, the corrected labels each test is scored against, started as the original pipeline's own boxes. That gives the original pipeline an advantage. It also scored lower on the rickshaw street, so the advantage does not explain Test 1, but it probably explains some of the gap in Test 2. More in the [details](docs/DETAILS.md).
+One caution on the scoring. My answer keys started as the original pipeline's own boxes, which I then corrected. That favors the original pipeline, because its box shapes line up with the key. It still lost on the rickshaw street, so that does not explain Test 1. It probably explains some of the gap in Test 2. More in the [details](docs/DETAILS.md).
 
-**What I take from it.** The two approaches seemed strong in different places. The original pipeline found about 60% of the market's carts but often called rickshaws carts or bicycles. The fine-tuned model named rickshaws well but found almost none of the carts, which I think is because it had not been shown that kind. Using both looks like a natural next step, along with training on footage that includes the market's carts.
+**What I take from it.** Each approach was strong in a different place. The original pipeline found about 60% of the market's carts, but it often called rickshaws carts or bicycles. The fine-tuned model named rickshaws well, but it found almost none of the carts. I think that is because I never showed it that kind. Using both looks like a natural next step, along with footage that has the market's carts.
 
-### A scene that is mostly one thing needs the most correcting
+### Clips that are mostly rickshaws needed the most correcting
 
 *In this case:* the first three clips started from the original pipeline. I corrected far more of its guesses on the clips that were mostly rickshaws than on the varied one.
 
 ![How much of the first guess I corrected](media/chart_corrections.png)
 
-On the busy Dhaka street I corrected 23% of the boxes. On the two clips that were mostly rickshaws I corrected 62% and 68%. My guess, which I have not tested: the first-pass tools already handle everyday objects, so a scene full of them needs little correcting, and a scene that is mostly the one thing they have no word for needs correcting almost everywhere. The night and rainy clips started from a model already fine-tuned on those two, so they are not a fair comparison. At night I corrected 86% of the boxes, mostly cars the model had called rickshaws.
+On the busy Dhaka street I corrected 23% of the boxes. On the two clips that were mostly rickshaws I corrected 62% and 68%. My guess, which I have not tested: the first-pass tools already know everyday objects, so a scene full of them needs little correcting. A scene that is mostly the one thing they have no word for needs correcting almost everywhere. The night and rainy clips started from a model already fine-tuned on those two, so they are not a fair comparison. At night I corrected 86% of the boxes, mostly cars the model had called rickshaws.
 
-### Pictures that look almost the same may not teach much extra
+### Half the pictures did as well as all of them
 
-*In this case:* training on every 2nd picture, 71 in all, found 136 of 179 rickshaws. Training on all 141 found 133. Training on every 4th picture, 36 in all, found 117 and had about twice the false alarms, so halving the pictures cost nothing and quartering them cost something. That is one run each, and in round 1 the same setup trained twice differed by 4, so the 71 against 141 gap is noise and the 36 against 141 gap is probably not. More in the [details](docs/DETAILS.md).
+*In this case:* training on every 2nd picture, 71 in all, found 136 of 179 rickshaws. Training on all 141 found 133. Training on every 4th picture, 36 in all, found 117, with about twice the false alarms. So half the pictures cost nothing, and a quarter cost something. That is one run each. In round 1 the same setup trained twice differed by 4, so the 71 against 141 gap is noise and the 36 against 141 gap probably is not. More in the [details](docs/DETAILS.md).
 
 ## Limits
 
@@ -129,7 +129,7 @@ d.class_id                                       # [1, 4, 1, 1, ...]
 d.data["class_name"]                             # ['person', 'motorcycle', 'person', 'person', ...]
 ```
 
-The ids are COCO's: 1 to 90, with gaps. The name list has 80 entries counted from zero. So a name I looked up by id landed on a different object, and my first video labeled people "bicycle." The right names were in `d.data["class_name"]`, which I only found later. I think the April fix to the class-name lookup for COCO weights (#1005) is why that field is right. And it looks like the same kind of silent shift that 1.11.2 turned into an error for custom class lists that include the Roboflow root category. *Idea:* make `class_names` a dictionary keyed by class id, or add a line to its docstring pointing to `detections.data["class_name"]`.
+The ids are COCO's: 1 to 90, with gaps. The name list has 80 entries counted from zero. So a name I looked up by id landed on a different object, and my first video labeled people "bicycle." The right names were in `d.data["class_name"]`, which I only found later. I think the April fix to the class-name lookup for COCO weights (#1005) is why that field is right. 1.11.2 also turned a similar silent shift into an error: a custom class list that includes the Roboflow root category. *Idea:* make `class_names` a dictionary keyed by class id, or add a line to its docstring pointing to `detections.data["class_name"]`.
 
 **2. I looked for the replacement in the deprecation warnings.**
 
