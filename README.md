@@ -64,7 +64,7 @@ The clips are numbered below and in the log. The folder names did not change.
 
 ### A few different examples can teach something new
 
-*In this case:* about five different rickshaws, shown many times, took RF-DETR from finding 44 of 179 rickshaws to about 138 on a clip it had never seen. On a second new clip, a roundabout, it went from 36 of 328 to about 165.
+*In this case:* about five different rickshaws, shown many times, took RF-DETR from finding 44 of 179 rickshaws to about 138 on a clip it had never seen. On a second new clip, a roundabout, a model trained on four clips went from 36 of 328 to 168.
 
 ### It did best on scenes like the ones I trained on
 
