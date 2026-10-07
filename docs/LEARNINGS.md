@@ -8,6 +8,6 @@ What I'd tell someone trying this.
 - **Label every object, and check for the ones the model missed.** A review page that only shows what the model found can never add a missing box. On one test clip it hid half of the rickshaws, and a crowded clip had so many missing that I removed it. A page for drawing missing boxes fixed it.
 - **A few clear, complete clips beat many partial ones.** Adding clips with few rickshaws did not move rickshaw scores. One steady clip with every rickshaw labeled did (see the experiment log).
 - **Test on footage you set aside,** and say what confidence cutoff you used.
-- **The speed is a good start.** About 30 milliseconds per picture on a laptop. I have not tested an edge device, and that is the next thing I would check.
+- **The speed is a good start.** About 30 milliseconds per picture start to finish on a laptop. The model alone takes about 13 milliseconds through CoreML on this Mac's graphics chip. I have not tested a small device.
 
 Roboflow's own guide, [How to Improve Your Computer Vision Model](https://roboflow.com/blog/how-to-improve-your-computer-vision-model), covers starting with 50 to 100 images, collecting data across times of day and weather, and tuning the confidence threshold.

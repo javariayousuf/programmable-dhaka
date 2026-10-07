@@ -31,7 +31,7 @@
 | A name for something RF-DETR did not know | Fine-tuned RF-DETR (80 everyday objects, no word for rickshaw) on 141 pictures that show only about five different rickshaws | On a clip it never saw, it went from finding 44 of 179 rickshaws to 138, about 10 to 15 minutes of training on a laptop |
 | A better model with another pass | The same loop: predict, correct, retrain | Adding one clear, fully labeled clip took rickshaw F1 on an unseen scene from 0.48 to 0.64 ([experiment log](docs/EXPERIMENT_LOG.md)) |
 | Steady, readable video | supervision: tracking, box smoothing, blurring and drawing | Each took a few settings, and together they made the picture at the top |
-| To run all of it myself | One laptop | About 30 milliseconds per picture |
+| To run all of it myself | One laptop | About 30 milliseconds per picture, start to finish. The model alone takes about 13 through CoreML on this Mac ([details](docs/DETAILS.md#speed-on-a-mac)) |
 
 ![The original pipeline and the fine-tuned model on a clip the model never trained on](media/before_after_rickshaw_street.gif)
 
@@ -192,10 +192,23 @@ import rfdetr.util   # ImportError: rfdetr.util was removed in v1.9.0. Use rfdet
 
 ## Questions I'd like to dig into
 
-- What makes one scene "similar" to another for the model? Is it the camera angle, how crowded it is, the time of day, the weather, or the mix of vehicles? I would add one kind of clip at a time (night, rain, a crowded market, a new angle) and score each on the same clips. That would also show which clips teach rickshaws best.
-- Could Grounding DINO and the fine-tuned model work together, so the carts get found too?
-- How should near-duplicate frames be handled? These are stills a fraction of a second apart that look almost the same. In one test, 71 pictures did as well as 141, and 36 did somewhat worse.
-- Would RF-DETR be fast enough at the edge, on the small computer next to a camera? I measured about 30 milliseconds per picture on a laptop. I have not measured a small device.
+1. **What makes one scene "similar" to another for the model?**
+   - What I did → added clips one at a time and scored each on the same unseen clip
+   - What I found → a clear clip with every rickshaw labeled moved the score → a clip with many vehicles but few rickshaws did not
+   - Still open → is it the camera angle, how crowded it is, the time of day, the weather, or the mix of vehicles?
+2. **Could Grounding DINO and the fine-tuned model work together, so the carts get found too?**
+   - Why → on the market clip the original pipeline found 40 of 67 carts, and the fine-tuned model found 1 to 3
+   - Not tried yet
+3. **How should near-duplicate frames be handled?**
+   - What I found → 71 pictures did as well as all 141, and 36 did somewhat worse
+   - Still open → I only tried evenly spaced pictures, not dropping the ones that look most alike
+4. **What closes the gap on the rickshaws it still misses?**
+   - Where it stands → the best model misses a third to a half of the rickshaws in a new scene
+   - Not tried yet → more clear rickshaw clips and photos, a bigger model, and picking the confidence cutoff on one clip and testing it on another
+5. **Is it fast enough at the edge?**
+   - What I measured → on this Mac (M4 Pro), the model alone takes about 13 ms per picture through CoreML on the graphics chip, about 27 ms with PyTorch on the same chip, and about 71 ms on the CPU
+   - What I have not measured → a small device next to a camera
+   - Details → [speed on a Mac](docs/DETAILS.md#speed-on-a-mac)
 
 ## Scores, how to rerun it, and tips
 

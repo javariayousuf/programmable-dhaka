@@ -66,6 +66,31 @@ I looked for frames where it found more rickshaws than the original pipeline. Wi
 
 ![Before and after on the Dhaka street](../media/before_after_dhaka.gif)
 
+## Speed on a Mac
+
+- **What I timed** → my best fine-tuned model (RF-DETR Small, the one scored on the roundabout), one 512 pixel picture at a time, model only → the steps before and after it, like resizing and drawing boxes, are not included
+- **The machine** → MacBook Pro, Apple M4 Pro, 24 GB, plugged in → three runs, and the CoreML numbers agreed within 1 ms each time
+- **Results**, median milliseconds per picture, lower is better:
+  - PyTorch on the CPU → about 71
+  - PyTorch on the graphics chip → about 27
+  - CoreML 32-bit, CPU and graphics chip → 15
+  - CoreML 16-bit, CPU and graphics chip → **13**, the fastest
+  - CoreML 16-bit, CPU and Neural Engine → 17
+  - CoreML 16-bit, all units → 18
+  - CoreML 16-bit, CPU only → 28
+  - CoreML 32-bit, CPU only → 45
+- **What it shows**
+  - CoreML on the graphics chip is about twice as fast as PyTorch on the same chip
+  - The Neural Engine was not the fastest here
+  - A 32-bit model cannot use the Neural Engine, so "CPU and Neural Engine" matched "CPU only" at 45
+- **Same detections?** → on 30 stills (184 detections at 0.5), the 32-bit CoreML model matched all 184 → the 16-bit model matched 183 and drew 1 extra, with confidence scores 0.0157 apart on average
+- **Caveats**
+  - It is a laptop chip, not a small device next to a camera
+  - The Mac was busy at times with iCloud syncing. The first two runs had a load of 20 or more, and PyTorch on the CPU fell from about 80 to 71 ms as it calmed, so the CPU rows are the least reliable
+  - RF-DETR's docs mark the CoreML export as experimental, and the tools warned that my PyTorch (2.14) is newer than they have been tested with
+  - RF-DETR's docs already publish a similar table for their Nano model on an M3 Pro
+- **Rerun it** → `python scripts/benchmark_coreml.py <checkpoint.pth> <folder of stills> speed.json`, on a Mac with `pip install "rfdetr[coreml]"` → my results are in [`eval/speed_mac_m4_pro.json`](../eval/speed_mac_m4_pro.json)
+
 ## A video gotcha that was mine, not Roboflow's
 
 A slideshow I made with OpenCV's `mp4v` codec showed as a solid green screen in the player I used. Writing H.264 with `yuv420p` fixed it. The videos made through supervision played fine.
