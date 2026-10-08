@@ -8,7 +8,7 @@
 
 *The Dhaka street clip, which RF-DETR never trained on.*
 
-<img src="media/dot_person.png" width="12" height="12" alt="blue dot"> person&nbsp;&nbsp;·&nbsp;&nbsp;<img src="media/dot_rickshaw.png" width="12" height="12" alt="pink dot"> rickshaw&nbsp;&nbsp;·&nbsp;&nbsp;<img src="media/dot_motorcycle.png" width="12" height="12" alt="purple dot"> motorcycle&nbsp;&nbsp;·&nbsp;&nbsp;<img src="media/dot_bicycle.png" width="12" height="12" alt="amber dot"> bicycle&nbsp;&nbsp;·&nbsp;&nbsp;<img src="media/dot_cart.png" width="12" height="12" alt="yellow-green dot"> cart
+<img src="media/dot_rickshaw.png" width="12" height="12" alt="pink dot"> rickshaw&nbsp;&nbsp;·&nbsp;&nbsp;<img src="media/dot_motorcycle.png" width="12" height="12" alt="purple dot"> motorcycle&nbsp;&nbsp;·&nbsp;&nbsp;<img src="media/dot_bicycle.png" width="12" height="12" alt="amber dot"> bicycle&nbsp;&nbsp;·&nbsp;&nbsp;<img src="media/dot_cart.png" width="12" height="12" alt="yellow-green dot"> cart
 
 ## Contents
 

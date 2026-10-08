@@ -90,7 +90,7 @@ def draw(img_bgr, items, size=22, width=11):
         tb = dr.textbbox((0, 0), text, font=f); tw, th = tb[2] - tb[0] + 12, tb[3] - tb[1] + 10
         ty = max(0, y1 - th)
         dr.rectangle([x1, ty, x1 + tw, ty + th], fill=col)
-        dr.text((x1 + 6, ty + 3), text, font=f, fill=(255, 255, 255) if cat in (3, 7) else (17, 17, 17))
+        dr.text((x1 + 6, ty + 3), text, font=f, fill=(255, 255, 255))   # white label text on every class color
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 

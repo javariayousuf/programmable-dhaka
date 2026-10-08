@@ -39,12 +39,10 @@ def draw(img_bgr, items, size=44, width=18):
     for cat, (x1, y1, x2, y2), text in items:
         col = rgb(HEX[cat])
         dr.rounded_rectangle([x1, y1, x2, y2], radius=14, outline=col, width=width)
-        if cat == 1:                                   # people get a box but no text chip, which is too busy in a crowd
-            continue
         tb = dr.textbbox((0, 0), text, font=f); tw, th = tb[2] - tb[0] + 12, tb[3] - tb[1] + 10
         ty = max(0, y1 - th)
         dr.rectangle([x1, ty, x1 + tw, ty + th], fill=col)
-        dr.text((x1 + 6, ty + 3), text, font=f, fill=(255, 255, 255) if cat == 3 else (17, 17, 17))
+        dr.text((x1 + 6, ty + 3), text, font=f, fill=(255, 255, 255))   # white label text on every class color
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 
@@ -76,7 +74,7 @@ while t < (START + LENGTH) * fps:
     low = model.predict(frame, threshold=0.25)                 # low cutoff so the blur misses fewer people
     hb = head_boxes(low[low.class_id == 0].xyxy, frame.shape[1], frame.shape[0])
     img = blur.annotate(frame.copy(), sv.Detections(xyxy=hb)) if len(hb) else frame.copy()
-    items = [(int(c) + 1, [float(v) for v in b], NAMES[int(c) + 1]) for b, c in zip(d.xyxy, d.class_id) if int(c) + 1 in NAMES]
+    items = [(int(c) + 1, [float(v) for v in b], NAMES[int(c) + 1]) for b, c in zip(d.xyxy, d.class_id) if int(c) + 1 in NAMES and int(c) != 0]   # people are blurred at the head but not boxed, as in the before/after GIFs
     img = draw(img, items)
     if CREDIT:
         img = credit(img, ["Created by J. Yousuf", TOOLS] + CREDIT)
