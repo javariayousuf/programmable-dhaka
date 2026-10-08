@@ -39,6 +39,19 @@
 
 One limit: on a scene unlike what it trained on, the model still misses a third to a half of the rickshaws, and on the crowded market the original pipeline scored higher (see below).
 
+### Compared with a competitor, Ultralytics YOLO26
+
+- **Same everything** → the same 418 pictures, 4,231 boxes and 7 classes, the same Mac, and the same scoring on two clips neither model trained on → each model's default recipe, no tuning
+- **On new scenes, RF-DETR Small was ahead:**
+  - rickshaw F1 on the roundabout → RF-DETR 0.64 · YOLO26-L 0.54 · YOLO26-S 0.53
+  - rickshaw F1 on the rain clip → RF-DETR 0.65 · YOLO26-L 0.45 · YOLO26-S 0.46
+  - rickshaws found on the roundabout, of 328 → RF-DETR 160 · YOLO26-L 132 · YOLO26-S 127
+- **On speed, YOLO was ahead** → fastest setting for each, median milliseconds per picture, model only → YOLO26-S 3.5 · YOLO26-L 11.4 · RF-DETR Small 13.2 → YOLO26-S is almost 4 times faster
+- **License** → RF-DETR Small is Apache 2.0, Ultralytics is AGPL-3.0
+- **What I take from it** → on my data, RF-DETR carried more over to new scenes, and YOLO runs faster → so the choice depends on whether you need accuracy on scenes you did not train on, or speed
+- **Limits** → one small dataset, one training run each, one Mac, and untuned defaults. YOLO got 60 epochs, about 2.4 times as many passes over the pictures as RF-DETR. A YOLO expert might do better
+- **Details and how to rerun it** → [the comparison](docs/DETAILS.md#against-a-competitor-ultralytics-yolo26)
+
 ## Why Dhaka
 
 I'm a Bangladeshi-American who has spent time in Dhaka, Bangladesh. I know from experience that there are really unique movement patterns: people with different modalities, really unexpected pathways of travel, non conformity in shapes and colors, culturally vibrant. I wanted to stress test the capabilities of the open source model with something I knew was complex.

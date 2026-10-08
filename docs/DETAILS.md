@@ -91,6 +91,36 @@ I looked for frames where it found more rickshaws than the original pipeline. Wi
   - RF-DETR's docs already publish a similar table for their Nano model on an M3 Pro
 - **Rerun it** → `python scripts/benchmark_coreml.py <checkpoint.pth> <folder of stills> speed.json`, on a Mac with `pip install "rfdetr[coreml]"` → my results are in [`eval/speed_mac_m4_pro.json`](../eval/speed_mac_m4_pro.json)
 
+## Against a competitor: Ultralytics YOLO26
+
+- **Why this one** → Ultralytics YOLO26 is a current, widely used detector → I tried two sizes, L and S
+- **What was identical**
+  - training data → 418 pictures, 4,231 boxes, 7 classes, built from the labels as they were when RF-DETR trained, so YOLO did not get the boxes I drew in later (`scripts/make_yolo_dataset.py`)
+  - test clips → the roundabout (328 rickshaws) and the rain clip (85), neither in training
+  - scoring → the same function as RF-DETR, class-aware at IoU 0.5, cutoff 0.5 (`scripts/evaluate_yolo.py`)
+  - machine → the same MacBook Pro, Apple M4 Pro
+- **What differed on purpose** → each model at its own input size (RF-DETR 512, YOLO 640) and its own default recipe → YOLO ran 60 epochs at batch 8, RF-DETR 25 epochs → training took about 67 minutes for YOLO26-L and 35 for YOLO26-S
+- **Accuracy on new scenes** (F1 at cutoff 0.5, rickshaws found in brackets)
+  - roundabout → RF-DETR 0.64 (160 of 328) · YOLO26-L 0.54 (132) · YOLO26-S 0.53 (127)
+  - rain → RF-DETR 0.65 (60 of 85) · YOLO26-L 0.45 (34) · YOLO26-S 0.46 (44)
+  - motorcycles on the roundabout → RF-DETR 0.76 · YOLO26-L 0.32 · YOLO26-S 0.26
+  - the red bus and trucks on the roundabout → RF-DETR 0.70 · YOLO26-L 0.00 · YOLO26-S 0.00
+  - a lower cutoff of 0.3 did not close the gap (`eval/yolo26*_0.3_*`)
+- **Check that the scoring is fair** → YOLO26-L on a clip it trained on (clip 3) scores well: rickshaw F1 0.87, and 71 of 71 trucks found → so the lower scores on new scenes are real, not a bug in how I scored it
+- **Speed on the Mac**, median milliseconds per picture, model only, timed back to back in one session (`eval/speed_compare_*.json`)
+  - PyTorch on the graphics chip → RF-DETR 26.7 · YOLO26-L 27.3 · YOLO26-S 10.9
+  - CoreML 16-bit on the graphics chip → RF-DETR 13.2 · YOLO26-L 16.7 · YOLO26-S 5.9
+  - CoreML 16-bit on the Neural Engine → RF-DETR 16.9 · YOLO26-L 11.4 · YOLO26-S 3.5
+  - PyTorch on the CPU → RF-DETR 73.3 · YOLO26-L 325.8 · YOLO26-S 137.2
+  - why it differs → YOLO is all convolutions, which the Neural Engine runs well → RF-DETR has a transformer backbone and runs best on the graphics chip
+- **Same detections after CoreML?** → RF-DETR matched 184 of 184 (32-bit) → YOLO26-L 170 of 178 → YOLO26-S 169 of 183 → the two checks are not identical (YOLO goes through Ultralytics' own preprocessing), so read them as "close", not as a ranking
+- **Setup notes**
+  - YOLO needs its labels as text files, so I converted the COCO JSON (about 30 lines) → RF-DETR reads COCO JSON directly
+  - batch 16 filled the 24 GB Mac for YOLO26-L on the graphics chip (21 GB, minutes per step), so I used batch 8
+  - Ultralytics' CoreML export failed with NumPy 2.5 and worked with NumPy 2.3.5 → RF-DETR's export worked with either
+- **Limits** → one small dataset, one training run each, one Mac, untuned defaults, and the YOLO epoch count was my choice → a YOLO expert might do better
+- **Rerun it** → `scripts/make_yolo_dataset.py`, then train with Ultralytics, then `scripts/evaluate_yolo.py`, `scripts/export_yolo_coreml.py` and `scripts/benchmark_yolo_coreml.py`
+
 ## A video gotcha that was mine, not Roboflow's
 
 A slideshow I made with OpenCV's `mp4v` codec showed as a solid green screen in the player I used. Writing H.264 with `yuv420p` fixed it. The videos made through supervision played fine.

@@ -1,0 +1,131 @@
+{
+  "info": {
+    "date": "2026-10-07 16:04",
+    "chip": "Apple M4 Pro",
+    "power": "82%; discharging",
+    "load_start": 2.3,
+    "torch": "2.14.1",
+    "coremltools": "9.0",
+    "python": "3.13.5",
+    "checkpoint": "checkpoint_best_total.pth",
+    "resolution": 512,
+    "iterations": "3 passes x 100, 10 warm-up, p50 = median of the three pass medians",
+    "load_end": 2.5
+  },
+  "latency": {
+    "pytorch_cpu": {
+      "p50_ms": 73.3,
+      "p50_per_pass": [
+        73.3,
+        72.1,
+        73.4
+      ],
+      "p95_ms": 87.5
+    },
+    "pytorch_mps": {
+      "p50_ms": 26.7,
+      "p50_per_pass": [
+        26.7,
+        26.7,
+        26.7
+      ],
+      "p95_ms": 27.6
+    },
+    "coreml_fp32_ALL": {
+      "p50_ms": 15.4,
+      "p50_per_pass": [
+        15.2,
+        15.4,
+        15.4
+      ],
+      "p95_ms": 15.7,
+      "load_s": 0.6
+    },
+    "coreml_fp32_CPU_AND_NE": {
+      "p50_ms": 45.3,
+      "p50_per_pass": [
+        45.4,
+        45.3,
+        45.3
+      ],
+      "p95_ms": 46.3,
+      "load_s": 0.6
+    },
+    "coreml_fp32_CPU_AND_GPU": {
+      "p50_ms": 15.4,
+      "p50_per_pass": [
+        15.2,
+        15.5,
+        15.4
+      ],
+      "p95_ms": 15.7,
+      "load_s": 0.5
+    },
+    "coreml_fp32_CPU_ONLY": {
+      "p50_ms": 45.5,
+      "p50_per_pass": [
+        45.4,
+        45.5,
+        45.5
+      ],
+      "p95_ms": 46.3,
+      "load_s": 0.5
+    },
+    "coreml_fp16_ALL": {
+      "p50_ms": 17.8,
+      "p50_per_pass": [
+        17.6,
+        17.8,
+        17.8
+      ],
+      "p95_ms": 18.9,
+      "load_s": 3.7
+    },
+    "coreml_fp16_CPU_AND_NE": {
+      "p50_ms": 16.9,
+      "p50_per_pass": [
+        16.8,
+        16.9,
+        16.9
+      ],
+      "p95_ms": 18.4,
+      "load_s": 3.7
+    },
+    "coreml_fp16_CPU_AND_GPU": {
+      "p50_ms": 13.2,
+      "p50_per_pass": [
+        13.0,
+        13.2,
+        13.2
+      ],
+      "p95_ms": 13.4,
+      "load_s": 0.4
+    },
+    "coreml_fp16_CPU_ONLY": {
+      "p50_ms": 27.8,
+      "p50_per_pass": [
+        27.8,
+        27.8,
+        27.9
+      ],
+      "p95_ms": 28.6,
+      "load_s": 0.4
+    }
+  },
+  "parity_vs_pytorch_cpu": {
+    "fp32": {
+      "reference_detections": 184,
+      "matched": 184,
+      "extra": 0,
+      "share_matched": 1.0,
+      "mean_abs_score_diff": 0.0
+    },
+    "fp16": {
+      "reference_detections": 184,
+      "matched": 183,
+      "extra": 1,
+      "share_matched": 0.995,
+      "mean_abs_score_diff": 0.0157
+    }
+  }
+}

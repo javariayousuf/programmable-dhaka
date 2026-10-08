@@ -1,0 +1,106 @@
+{
+  "rain": {
+    "images": 106,
+    "weights": "yolo26s",
+    "conf": 0.3,
+    "finetuned": {
+      "bicycle": {
+        "tp": 5,
+        "fp": 8,
+        "fn": 90,
+        "precision": 0.385,
+        "recall": 0.053,
+        "f1": 0.093,
+        "gt": 95
+      },
+      "motorcycle": {
+        "tp": 8,
+        "fp": 11,
+        "fn": 10,
+        "precision": 0.421,
+        "recall": 0.444,
+        "f1": 0.432,
+        "gt": 18
+      },
+      "rickshaw": {
+        "tp": 48,
+        "fp": 86,
+        "fn": 37,
+        "precision": 0.358,
+        "recall": 0.565,
+        "f1": 0.438,
+        "gt": 85
+      },
+      "cart": {
+        "tp": 0,
+        "fp": 0,
+        "fn": 0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "gt": 0
+      },
+      "truck": {
+        "tp": 7,
+        "fp": 21,
+        "fn": 27,
+        "precision": 0.25,
+        "recall": 0.206,
+        "f1": 0.226,
+        "gt": 34
+      },
+      "ALL VEHICLES": {
+        "tp": 61,
+        "fp": 105,
+        "fn": 137,
+        "precision": 0.367,
+        "recall": 0.308,
+        "f1": 0.335,
+        "gt": 198
+      }
+    },
+    "finetuned_confusion": {
+      "bicycle": {
+        "bicycle": 5,
+        "motorcycle": 2,
+        "rickshaw": 19,
+        "cart": 0,
+        "truck": 0,
+        "missed": 69
+      },
+      "motorcycle": {
+        "bicycle": 0,
+        "motorcycle": 8,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 10
+      },
+      "rickshaw": {
+        "bicycle": 2,
+        "motorcycle": 0,
+        "rickshaw": 48,
+        "cart": 0,
+        "truck": 0,
+        "missed": 35
+      },
+      "cart": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 0,
+        "cart": 0,
+        "truck": 0,
+        "missed": 0
+      },
+      "truck": {
+        "bicycle": 0,
+        "motorcycle": 0,
+        "rickshaw": 4,
+        "cart": 0,
+        "truck": 7,
+        "missed": 23
+      }
+    },
+    "ms_per_image_median_end_to_end": 7.9
+  }
+}
