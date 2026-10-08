@@ -46,7 +46,7 @@ def draw(img_bgr, items, size=44, width=18):
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 
-def credit(img, lines, size=36):
+def credit(img, lines, size=int(os.environ.get("CREDIT_SIZE", "36"))):   # smaller for wide scenes where the box would hide the action
     f = ImageFont.truetype(FONT_PATH, size)
     pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB)); dr = ImageDraw.Draw(pil)
     boxes = [dr.textbbox((0, 0), t, font=f) for t in lines]
