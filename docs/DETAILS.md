@@ -177,7 +177,7 @@ Dropping half the pictures cost nothing here, which fits the near-copies. Droppi
 | First guess | 425 | 32 | 0 |
 | After my corrections | 58 | 379 | 26 |
 
-![Night traffic](../media/night_traffic.gif)
+![Night traffic](../media/night_traffic_v2.gif)
 
 *The model trained on this clip, so this is not a test.*
 

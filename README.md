@@ -4,7 +4,7 @@
 
 <img src="media/claude_orange.png" width="12" height="12" alt=""> Built with Claude Code, Sonnet 5.5
 
-![The fine-tuned model on a Dhaka street clip it never trained on](media/hero_dhaka_street.gif)
+![The fine-tuned model on a Dhaka street clip it never trained on](media/hero_dhaka_street_v2.gif)
 
 *The Dhaka street clip, which RF-DETR never trained on.*
 

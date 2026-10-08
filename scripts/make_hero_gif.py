@@ -39,6 +39,8 @@ def draw(img_bgr, items, size=44, width=18):
     for cat, (x1, y1, x2, y2), text in items:
         col = rgb(HEX[cat])
         dr.rounded_rectangle([x1, y1, x2, y2], radius=14, outline=col, width=width)
+        if cat == 1:                                   # people get a box but no text chip, which is too busy in a crowd
+            continue
         tb = dr.textbbox((0, 0), text, font=f); tw, th = tb[2] - tb[0] + 12, tb[3] - tb[1] + 10
         ty = max(0, y1 - th)
         dr.rectangle([x1, ty, x1 + tw, ty + th], fill=col)
