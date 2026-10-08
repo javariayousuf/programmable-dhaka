@@ -23,15 +23,13 @@
 
 ## Reasons to try Roboflow's open source tools
 
-**Plug and play.** All I needed to start was my laptop and free videos I downloaded.
-
-| What I wanted | What I used | What happened |
-|---|---|---|
-| First labels without drawing every box | RF-DETR, which already knows everyday objects, and Grounding DINO, which finds things from a written description, for rickshaws and carts | I corrected the first guess instead of drawing every box: 23% of the boxes on the busy Dhaka street, and about two thirds on the clips that were mostly rickshaws |
-| A name for something RF-DETR did not know | Fine-tuned RF-DETR (80 everyday objects, no word for rickshaw) on 141 pictures that show only about five different rickshaws | On a clip it never saw, it went from finding 44 of 179 rickshaws to 138, about 10 to 15 minutes of training on a laptop |
-| A better model with another pass | The same loop: predict, correct, retrain | Adding one clear, fully labeled clip took rickshaw F1 on an unseen scene from 0.48 to 0.64 ([experiment log](docs/EXPERIMENT_LOG.md)) |
-| Steady, readable video | supervision: tracking, box smoothing, blurring and drawing | Each took a few settings, and together they made the picture at the top |
-| To run all of it myself | One laptop | About 30 milliseconds per picture, start to finish. The model alone takes about 13 through CoreML on this Mac ([details](docs/DETAILS.md#speed-on-a-mac)) |
+- **Plug and play.** All I needed to start was my laptop and free videos I downloaded.
+- **Intelligent modeling from RF-DETR.**
+  - **Pre-labeling.** RF-DETR was already trained on everyday objects, and Grounding DINO (which finds things from a written description) handled rickshaws and carts. Together they drew a first set of labels, each one a box and a name around a vehicle. I call that first-pass setup the original pipeline. I corrected its mistakes instead of drawing every box myself: 23% of the boxes on the busy Dhaka street, and about two thirds on the clips that were mostly rickshaws.
+  - **An unknown concept, from a handful of examples.** RF-DETR knows 80 everyday kinds of objects, but it had no word for a rickshaw. I trained it on 141 pictures, but they show only about five different rickshaws, many of them near-copies of each other. About 10 to 15 minutes later, on a laptop, it found 138 of 179 rickshaws in a clip it had never seen. The original pipeline found 44.
+  - **A better model with another pass.** The same loop of predict, correct, retrain. Adding one clear, fully labeled clip took rickshaw F1 on an unseen scene from 0.48 to 0.64 ([experiment log](docs/EXPERIMENT_LOG.md)).
+- **Easy to customize and tune.** supervision let me change how vehicles are followed, how steady the boxes are, what gets blurred, and how everything is drawn. Each one took a few settings, and together they made the picture at the top.
+- **Everything ran on one laptop,** at about 30 milliseconds per picture, start to finish. The model alone takes about 13 through CoreML on this Mac ([details](docs/DETAILS.md#speed-on-a-mac)).
 
 ![The original pipeline and the fine-tuned model on a clip the model never trained on](media/before_after_rickshaw_street.gif)
 
