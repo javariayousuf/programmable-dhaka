@@ -19,7 +19,6 @@ Round 2 additions:
 - `python scripts/add_boxes.py labels/<clip>` opens a page to draw the boxes the model never found, and `python scripts/apply_added.py labels/<clip>` writes them in. Do this before trusting a clip as an answer key.
 - `python scripts/make_train_dataset.py <clips> <out_dir> --no-truck` trains without the truck class, for a with-and-without comparison. `CONF=0.3 python scripts/evaluate.py ...` changes the confidence cutoff.
 - `python scripts/benchmark_coreml.py <checkpoint.pth> <folder of stills> speed.json` exports a model to CoreML and times it against PyTorch, on a Mac with `pip install "rfdetr[coreml]"`.
-- Against a competitor: `python scripts/make_yolo_dataset.py <out_dir> <clips>` converts the labels for Ultralytics, `scripts/evaluate_yolo.py` scores a YOLO model with the same code as RF-DETR, and `scripts/export_yolo_coreml.py` plus `scripts/benchmark_yolo_coreml.py` time it on a Mac (use NumPy 2.3 for the export).
 - The label files now include the truck class and the corrected `clip3` key. The round 1 numbers in the README used the earlier files, which are at the `round-1` tag.
 
 `detect3.py`, `make_figures.py` and `make_charts.py` use Futura from macOS by default. Set `FONT_PATH` to any `.ttf` on another system.
