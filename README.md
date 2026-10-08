@@ -35,6 +35,8 @@
 
 *Test 1: the original pipeline on the left, the fine-tuned model on the right.*
 
+*Watch the white truck: the fine-tuned model calls it a rickshaw in some frames (18 of the 71 truck boxes in this clip), and the original pipeline calls most of them carts (41 of 71). This model had no truck class.*
+
 One limit: on a scene unlike what it trained on, the model still misses a third to a half of the rickshaws, and on the crowded market the original pipeline scored higher (see below).
 
 ### Speed on a Mac
